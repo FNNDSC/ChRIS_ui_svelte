@@ -10,6 +10,7 @@ import {
   useLoaderData,
 } from "@remix-run/react";
 import type { LoaderFunction } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import {
   NonFlashOfWrongThemeEls,
   ThemeProvider,
@@ -17,18 +18,22 @@ import {
 } from "~/utils/theme-provider";
 import type { Theme } from "~/utils/theme-provider";
 import { getThemeSession } from "~/utils/theme.server";
-import Navigation from "./components/Navigation";
 import mainStyles from "./tailwind.css";
+import { getUser } from "./utils/session.server";
+import { User } from "@fnndsc/chrisapi";
 
 export type LoaderData = {
   theme: Theme | null;
+  user: User | null;
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
   const themeSession = await getThemeSession(request);
+  const user = await getUser(request);
 
   const data: LoaderData = {
     theme: themeSession.getTheme(),
+    user: user ?? null,
   };
 
   return data;
