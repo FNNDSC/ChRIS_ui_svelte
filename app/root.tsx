@@ -1,11 +1,10 @@
-import clsx from "clsx";
 import { cssBundleHref } from "@remix-run/css-bundle";
-
 import type { LinksFunction } from "@remix-run/node";
 import {
   Links,
   LiveReload,
   Meta,
+  Outlet,
   Scripts,
   ScrollRestoration,
   useLoaderData,
@@ -45,9 +44,9 @@ export const links: LinksFunction = () => [
 
 function App() {
   const data = useLoaderData<LoaderData>();
-  const [theme] = useTheme();
+
   return (
-    <html lang="en" className={clsx(theme)}>
+    <html lang="en" className="h-full bg-gray-900">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
@@ -55,8 +54,8 @@ function App() {
         <NonFlashOfWrongThemeEls ssrTheme={Boolean(data.theme)} />
         <Links />
       </head>
-      <body>
-        <Navigation />
+      <body className="h-full">
+        <Outlet />
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
