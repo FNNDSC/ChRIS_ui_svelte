@@ -1,15 +1,33 @@
 import type { LoaderArgs } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useSearchParams } from "@remix-run/react";
 import { getFeeds } from "~/api/feeds";
 import Pagination from "~/components/Pagination";
 import { getToken, requireUserId } from "~/utils/session.server";
 
+const PER_PAGE = 12;
+
 export const loader = async ({ request }: LoaderArgs) => {
   await requireUserId(request);
-  const token = await getToken(request);
-  const feeds = await getFeeds("", 15, 10, token);
+  const url = new URL(request.url);
+  const query = url.searchParams;
+  const currentPage = Math.max(Number(query.get("page") || 1), 1);
 
-  return feeds;
+  const token = await getToken(request);
+  const { feeds, paginate } = await getFeeds({
+    name: "",
+    limit: PER_PAGE,
+    offset: (currentPage - 1) * PER_PAGE,
+    token,
+  });
+
+  return {
+    feeds,
+    paginate: {
+      ...paginate,
+      perPage: PER_PAGE,
+      currentPage,
+    },
+  };
 };
 
 export default function Example() {
@@ -24,7 +42,7 @@ export default function Example() {
               <div className="sm:flex sm:items-center">
                 <div className="sm:flex-auto">
                   <h1 className="text-base font-semibold leading-6 text-white">
-                    Existing Analyses
+                    Existing Analyses ({data.paginate.totalCount})
                   </h1>
                   <p className="mt-2 text-sm text-gray-300">
                     A list of all the analyses in your account including their
@@ -127,7 +145,7 @@ export default function Example() {
                             </td>
                             <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                               <a
-                                href="#"
+                                href="/edit"
                                 className="text-indigo-400 hover:text-indigo-300"
                               >
                                 Edit
@@ -146,7 +164,7 @@ export default function Example() {
         </div>
       </div>
 
-      <Pagination />
+      <Pagination paginate={data.paginate} />
     </>
   );
 }
