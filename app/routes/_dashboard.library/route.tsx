@@ -1,3 +1,3 @@
 export default function library() {
-    return <div>Library Route</div>
+    return <div className='text-white'>Library Route</div>
 }

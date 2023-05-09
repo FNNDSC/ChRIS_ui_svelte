@@ -8,7 +8,7 @@ import Client from "@fnndsc/chrisapi";
 export const badRequest = <T>(data: T) => json<T>(data, { status: 400 });
 
 export async function verifyLogin(username: string, password: string) {
-  const authURL = "http://localhost:8000/api/v1/auth-token/";
+  const authURL = "https://cube.chrisproject.org/api/v1/auth-token/";
   const token = await Client.getAuthToken(authURL, username, password);
 
   if (!token) return null;

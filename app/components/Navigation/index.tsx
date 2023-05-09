@@ -1,66 +1,23 @@
 import { Fragment, useState } from "react";
 import { Dialog, Transition } from "@headlessui/react";
-import {
-  ChartBarSquareIcon,
-  Cog6ToothIcon,
-  FolderIcon,
-  GlobeAltIcon,
-  ServerIcon,
-  SignalIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { FolderIcon, ServerIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Bars3Icon, MagnifyingGlassIcon } from "@heroicons/react/20/solid";
-import { Outlet } from "@remix-run/react";
+import { Outlet, NavLink } from "@remix-run/react";
 
 const navigation = [
-  { name: "Projects", href: "#", icon: FolderIcon, current: false },
-  { name: "Deployments", href: "#", icon: ServerIcon, current: true },
-  { name: "Activity", href: "#", icon: SignalIcon, current: false },
-  { name: "Domains", href: "#", icon: GlobeAltIcon, current: false },
-  { name: "Usages", href: "#", icon: ChartBarSquareIcon, current: false },
-  { name: "Settings", href: "#", icon: Cog6ToothIcon, current: false },
+  { name: "Dashboard", href: "/", icon: FolderIcon },
+  { name: "Library", href: "/library", icon: FolderIcon },
+  {
+    name: "Existing Analyses",
+    href: "/feeds",
+    icon: ServerIcon,
+    current: true,
+  },
 ];
 const teams = [
-  { id: 1, name: "Planetaria", href: "#", initial: "P", current: false },
-  { id: 2, name: "Protocol", href: "#", initial: "P", current: false },
-  { id: 3, name: "Tailwind Labs", href: "#", initial: "T", current: false },
-];
-const statuses = {
-  offline: "text-gray-500 bg-gray-100/10",
-  online: "text-green-400 bg-green-400/10",
-  error: "text-rose-400 bg-rose-400/10",
-};
-const environments = {
-  Preview: "text-gray-400 bg-gray-400/10 ring-gray-400/20",
-  Production: "text-indigo-400 bg-indigo-400/10 ring-indigo-400/30",
-};
-const deployments = [
-  {
-    id: 1,
-    href: "#",
-    projectName: "ios-app",
-    teamName: "Planetaria",
-    status: "offline",
-    statusText: "Initiated 1m 32s ago",
-    description: "Deploys from GitHub",
-    environment: "Preview",
-  },
-  // More deployments...
-];
-const activityItems = [
-  {
-    user: {
-      name: "Michael Foster",
-      imageUrl:
-        "https://images.unsplash.com/photo-1519244703995-f4e0f30006d5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80",
-    },
-    projectName: "ios-app",
-    commit: "2d89f0c8",
-    branch: "main",
-    date: "1h",
-    dateTime: "2023-01-23T11:00",
-  },
-  // More items...
+  { id: 1, name: "Pipelines", href: "#", initial: "P", current: false },
+  { id: 2, name: "Plugins", href: "#", initial: "P", current: false },
+  { id: 3, name: "Compute", href: "#", initial: "C", current: false },
 ];
 
 function classNames(...classes: any[]) {
@@ -72,14 +29,6 @@ export default function Example() {
 
   return (
     <>
-      {/*
-        This example requires updating your template:
-
-        ```
-        <html class="h-full bg-gray-900">
-        <body class="h-full">
-        ```
-      */}
       <div>
         <Transition.Root show={sidebarOpen} as={Fragment}>
           <Dialog
@@ -139,35 +88,37 @@ export default function Example() {
                       The ChRIS UI Dashboard
                     </div>
                     <nav className="flex flex-1 flex-col">
-                      <ul role="list" className="flex flex-1 flex-col gap-y-7">
+                      <ul className="flex flex-1 flex-col gap-y-7">
                         <li>
-                          <ul role="list" className="-mx-2 space-y-1">
+                          <ul className="-mx-2 space-y-1">
                             {navigation.map((item) => (
                               <li key={item.name}>
-                                <a
-                                  href={item.href}
-                                  className={classNames(
-                                    item.current
-                                      ? "bg-gray-800 text-white"
-                                      : "text-gray-400 hover:text-white hover:bg-gray-800",
-                                    "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                                  )}
+                                <NavLink
+                                  to={item.href}
+                                  className={({ isActive }) => {
+                                    return classNames(
+                                      isActive
+                                        ? "bg-gray-800 text-white"
+                                        : "text-gray-400 hover:text-white hover:bg-gray-800",
+                                      "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                                    );
+                                  }}
                                 >
                                   <item.icon
                                     className="h-6 w-6 shrink-0"
                                     aria-hidden="true"
                                   />
                                   {item.name}
-                                </a>
+                                </NavLink>
                               </li>
                             ))}
                           </ul>
                         </li>
                         <li>
                           <div className="text-xs font-semibold leading-6 text-gray-400">
-                            Your teams
+                            Your Data
                           </div>
-                          <ul role="list" className="-mx-2 mt-2 space-y-1">
+                          <ul className="-mx-2 mt-2 space-y-1">
                             {teams.map((team) => (
                               <li key={team.name}>
                                 <a
@@ -190,7 +141,7 @@ export default function Example() {
                         </li>
                         <li className="-mx-6 mt-auto">
                           <a
-                            href="#"
+                            href="https://next.chrisproject.org"
                             className="flex items-center gap-x-4 px-6 py-3 text-sm font-semibold leading-6 text-white hover:bg-gray-800"
                           >
                             <img
@@ -219,35 +170,38 @@ export default function Example() {
               The ChRIS UI Dashboard
             </div>
             <nav className="flex flex-1 flex-col">
-              <ul role="list" className="flex flex-1 flex-col gap-y-7">
+              <ul className="flex flex-1 flex-col gap-y-7">
                 <li>
-                  <ul role="list" className="-mx-2 space-y-1">
+                  <ul className="-mx-2 space-y-1">
                     {navigation.map((item) => (
                       <li key={item.name}>
-                        <a
-                          href={item.href}
-                          className={classNames(
-                            item.current
-                              ? "bg-gray-800 text-white"
-                              : "text-gray-400 hover:text-white hover:bg-gray-800",
-                            "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                          )}
+                        <NavLink
+                          to={item.href}
+                          className={({ isActive }) => {
+                            console.log("IsActive", isActive, item.name);
+                            return classNames(
+                              isActive
+                                ? "bg-gray-800 text-white"
+                                : "text-gray-400 hover:text-white hover:bg-gray-800",
+                              "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
+                            );
+                          }}
                         >
                           <item.icon
                             className="h-6 w-6 shrink-0"
                             aria-hidden="true"
                           />
                           {item.name}
-                        </a>
+                        </NavLink>
                       </li>
                     ))}
                   </ul>
                 </li>
                 <li>
                   <div className="text-xs font-semibold leading-6 text-gray-400">
-                    Your teams
+                    Your Data
                   </div>
-                  <ul role="list" className="-mx-2 mt-2 space-y-1">
+                  <ul className="-mx-2 mt-2 space-y-1">
                     {teams.map((team) => (
                       <li key={team.name}>
                         <a
