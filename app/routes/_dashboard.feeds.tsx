@@ -1,15 +1,18 @@
+import Pagination from "~/components/Pagination";
+
 const people = [
-    {
-      name: "Lindsay Walton",
-      title: "Front-end Developer",
-      email: "lindsay.walton@example.com",
-      role: "Member",
-    },
-    // More people...
-  ];
-  
-  export default function Example() {
-    return (
+  {
+    name: "Lindsay Walton",
+    title: "Front-end Developer",
+    email: "lindsay.walton@example.com",
+    role: "Member",
+  },
+  // More people...
+];
+
+export default function Example() {
+  return (
+    <>
       <div className="bg-gray-900">
         <div>
           <div className="bg-gray-900 py-10">
@@ -20,7 +23,7 @@ const people = [
                     Existing Analyses
                   </h1>
                   <p className="mt-2 text-sm text-gray-300">
-                   A list of all your feeds
+                    A list of all your feeds
                   </p>
                 </div>
                 <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
@@ -105,6 +108,7 @@ const people = [
           </div>
         </div>
       </div>
-    );
-  }
-  
+      <Pagination />
+    </>
+  );
+}
