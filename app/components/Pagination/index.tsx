@@ -21,7 +21,6 @@ export default function Pagination({
   nextQuery.set(pageParam, `${currentPage + 1}`);
 
   const totalPages = Math.ceil(paginate.totalCount / paginate.perPage);
-  console.log("CurrentPage", currentPage);
 
   return (
     <nav
