@@ -1,5 +1,6 @@
 import { redirect, createCookieSessionStorage } from "@remix-run/node";
-import Client from "@fnndsc/chrisapi";
+import { getUserById } from "~/api/user";
+
 
 const USER_SESSION_KEY = "userId";
 
@@ -33,13 +34,6 @@ export async function getToken(request: Request) {
   const token = session.get(USER_SESSION_KEY);
   return token;
 }
-
-const getUserById = async (token: string) => {
-  const client = fetchClient(token);
-  const user = (await client.getUser()).data;
-
-  return user;
-};
 
 export const getUser = async (request: Request) => {
   const token = await getToken(request);
@@ -90,13 +84,6 @@ export async function requireUserId(
   }
   return token;
 }
-
-export const fetchClient = (token: string) => {
-  const client = new Client("https://cube.chrisproject.org/api/v1/", {
-    token,
-  });
-  return client;
-};
 
 export async function requireUser(request: Request) {
   const token = await requireUserId(request);

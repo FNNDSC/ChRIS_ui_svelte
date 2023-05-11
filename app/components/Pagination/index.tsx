@@ -19,7 +19,6 @@ export default function Pagination({
   previousQuery.set(pageParam, `${currentPage - 1}`);
   const nextQuery = new URLSearchParams(queryParams);
   nextQuery.set(pageParam, `${currentPage + 1}`);
-
   const totalPages = Math.ceil(paginate.totalCount / paginate.perPage);
 
   return (

@@ -1,4 +1,4 @@
-import { fetchClient } from "~/utils/session.server";
+import { fetchClient } from "./user";
 
 type FeedParam = {
   name: string;

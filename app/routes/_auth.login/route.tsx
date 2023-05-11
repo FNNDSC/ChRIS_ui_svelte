@@ -1,4 +1,4 @@
-import { Link, useSearchParams, useActionData } from "@remix-run/react";
+import { useSearchParams, useActionData, Form, Link } from "@remix-run/react";
 import { redirect, json } from "@remix-run/node";
 import type { ActionArgs, LoaderArgs } from "@remix-run/node";
 import { badRequest, verifyLogin } from "~/utils/request.server";
@@ -79,7 +79,7 @@ export default function Login() {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-          <form className="space-y-6" method="POST">
+          <Form className="space-y-6" method="POST">
             <input
               type="hidden"
               name="redirectTo"
@@ -155,16 +155,17 @@ export default function Login() {
                 Sign in
               </button>
             </div>
-          </form>
+          </Form>
 
           <p className="mt-10 text-center text-sm text-gray-400">
             Not a member?{" "}
-            <a
-              href="#"
+            <Link
+              
+              to="/register"
               className="font-semibold leading-6 text-indigo-400 hover:text-indigo-300"
             >
               Register
-            </a>
+            </Link>
           </p>
         </div>
       </div>
