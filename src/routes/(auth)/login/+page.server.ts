@@ -26,7 +26,7 @@ const login: Action = async ({ cookies, request }: any) => {
 		return fail(400, { form });
 	}
 
-	const authURL = 'http://localhost:8000/api/v1/auth-token/';
+	const authURL = 'https://cube.chrisproject.org/api/v1/auth-token/';
 
 	try {
 		const token = await Client.getAuthToken(authURL, form.data.username, form.data.password);

@@ -1,5 +1,6 @@
 <script lang="ts">
-  import { fetchClient } from "../../../utils/index.js";
+  import { uploadStatus } from "$lib/stores/uploadStore";
+  import { fetchClient } from "$lib/utils/client";
   import axios from "axios";
   import type { AxiosProgressEvent } from "axios";
   import type { PageData } from "./$types";
@@ -7,7 +8,6 @@
   export let data: PageData;
   let files: FileList;
   let folderName = "";
-  let statusMap = new Map();
 
   async function handleSubmit() {
     if (data.token) {
@@ -30,10 +30,8 @@
             headers: { Authorization: "Token " + token },
             onUploadProgress: (progressEvent: AxiosProgressEvent) => {
               if (progressEvent && progressEvent.progress) {
-                statusMap = statusMap.set(
-                  file.name,
-                  Math.round(progressEvent.progress * 100)
-                );
+                const progress = Math.round(progressEvent.progress * 100);
+                uploadStatus.setStatus(file.name, progress);
               }
             },
           };
@@ -46,8 +44,6 @@
       await Promise.all(filePromises);
     }
   }
-
-  $: console.log(statusMap);
 </script>
 
 <form class="sm:ml-4 lg:ml-8" on:submit|preventDefault={handleSubmit}>

@@ -23,7 +23,7 @@ const register: Action = async ({ request }) => {
 		return fail(400, { form });
 	}
 
-	const userURL = 'http://localhost/api/v1/users/';
+	const userURL = 'https://cube.chrisproject.org/api/v1/users/';
 
 	try {
 		await Client.createUser(userURL, form.data.username, form.data.password, form.data.email);

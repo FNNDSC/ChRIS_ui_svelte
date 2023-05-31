@@ -1,5 +1,4 @@
 {
-	"/(auth)": [],
 	"/(_dashboard)": [
 		"src/routes/(_dashboard)/+page.server.ts",
 		"src/routes/(_dashboard)/+layout.server.ts",
@@ -19,5 +18,13 @@
 	],
 	"/(auth)/register": [
 		"src/routes/(auth)/register/+page.server.ts"
+	],
+	"/(_dashboard)/uploads": [
+		"src/routes/(_dashboard)/uploads/+page.server.ts",
+		"src/routes/(_dashboard)/+layout.server.ts"
+	],
+	"/(_dashboard)/uploads/[...slug]": [
+		"src/routes/(_dashboard)/uploads/[...slug]/+page.server.ts",
+		"src/routes/(_dashboard)/+layout.server.ts"
 	]
 }

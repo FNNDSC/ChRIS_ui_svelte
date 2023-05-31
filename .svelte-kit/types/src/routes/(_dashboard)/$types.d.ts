@@ -11,8 +11,8 @@ type OptionalUnion<U extends Record<string, any>, A extends keyof U = U extends 
 export type Snapshot<T = any> = Kit.Snapshot<T>;
 type PageServerParentData = Omit<EnsureDefined<import('../$types.js').LayoutServerData>, keyof LayoutServerData> & EnsureDefined<LayoutServerData>;
 type PageParentData = Omit<EnsureDefined<import('../$types.js').LayoutData>, keyof LayoutData> & EnsureDefined<LayoutData>;
-type LayoutRouteId = RouteId | "/(_dashboard)" | "/(_dashboard)/feeds" | "/(_dashboard)/fileuploads"
-type LayoutParams = RouteParams & {  }
+type LayoutRouteId = RouteId | "/(_dashboard)" | "/(_dashboard)/feeds" | "/(_dashboard)/fileuploads" | "/(_dashboard)/uploads" | "/(_dashboard)/uploads/[...slug]"
+type LayoutParams = RouteParams & { slug?: string }
 type LayoutServerParentData = EnsureDefined<import('../$types.js').LayoutServerData>;
 type LayoutParentData = EnsureDefined<import('../$types.js').LayoutData>;
 
