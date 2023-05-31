@@ -31,9 +31,10 @@
 	"type": "module",
 	"dependencies": {
 		"@fnndsc/chrisapi": "^1.12.0",
+		"axios": "^1.4.0",
 		"svelte-headlessui": "^0.0.15",
 		"svelte-transition": "^0.0.7",
-		"zod": "^3.21.4",
-		"sveltekit-superforms": "^0.8.7"
+		"sveltekit-superforms": "^0.8.7",
+		"zod": "^3.21.4"
 	}
 }

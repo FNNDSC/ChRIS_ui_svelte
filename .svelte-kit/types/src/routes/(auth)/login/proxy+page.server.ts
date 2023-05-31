@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { Action, Actions, PageServerLoad } from './$types';
 import Client from '@fnndsc/chrisapi';
 import { fail, error, redirect } from '@sveltejs/kit';
@@ -9,7 +10,7 @@ const schema = z.object({
 	password: z.string()
 });
 
-export const load: PageServerLoad = async ({ locals, request }) => {
+export const load = async ({ locals, request }: Parameters<PageServerLoad>[0]) => {
 	if (locals.user) {
 		throw redirect(302, '/');
 	}
@@ -49,4 +50,5 @@ const login: Action = async ({ cookies, request }: any) => {
 	throw redirect(302, '/');
 };
 
-export const actions: Actions = { login };
+export const actions = { login };
+;null as any as Actions;

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import type { PageServerLoad, Action, Actions } from './$types';
 import { fail, error, redirect } from '@sveltejs/kit';
 import Client from '@fnndsc/chrisapi';
@@ -10,7 +11,7 @@ const schema = z.object({
 	email: z.string().email()
 });
 
-export const load: PageServerLoad = async (event) => {
+export const load = async (event: Parameters<PageServerLoad>[0]) => {
 	const form = await superValidate(event, schema);
 	return { form };
 };
@@ -34,4 +35,5 @@ const register: Action = async ({ request }) => {
 	throw redirect(303, '/login');
 };
 
-export const actions: Actions = { register };
+export const actions = { register };
+;null as any as Actions;
