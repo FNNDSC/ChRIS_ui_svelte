@@ -1,6 +1,7 @@
 <script lang="ts">
   import { uploadStore } from "$lib/stores/uploadStore";
   import { fetchClient } from "$lib/client";
+  import Button from "$components/ui/button/Button.svelte";
   import axios from "axios";
   import type { AxiosProgressEvent } from "axios";
   import type { PageData } from "./$types";
@@ -55,7 +56,6 @@
         This information will be displayed publicly so be careful what you
         share.
       </p>
-      4
 
       <div class="mt-2 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
         <div class="sm:col-span-4">
@@ -162,11 +162,7 @@
                       </div>
                     </div>
                     <div class="ml-4 flex-shrink-0">
-                      <a
-                        href="/"
-                        class="font-medium text-indigo-400 hover:text-indigo-300"
-                        >Delete</a
-                      >
+                      <Button variant="destructive">Delete</Button>
                     </div>
                   </li>
                 {/each}
@@ -193,13 +189,7 @@
   </div>
 
   <div class="mt-6 flex items-center gap-x-6">
-    <button type="button" class="text-sm font-semibold leading-6 text-white"
-      >Cancel</button
-    >
-    <button
-      type="submit"
-      class="rounded-md bg-indigo-500 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
-      >Save</button
-    >
+    <Button variant="ghost">Cancel</Button>
+    <Button variant="default">Save</Button>
   </div>
 </form>

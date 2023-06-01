@@ -1,5 +1,5 @@
 import type { PageServerLoad } from "./$types";
-import { redirect, error } from "@sveltejs/kit";
+import { redirect, error, fail } from "@sveltejs/kit";
 import { fetchClient } from "$lib/client";
 
 export const load: PageServerLoad = async ({ locals, cookies, url }) => {
@@ -7,24 +7,19 @@ export const load: PageServerLoad = async ({ locals, cookies, url }) => {
     throw redirect(302, "/login");
   }
 
+  const session = cookies.get("session");
+  if (!session) {
+    throw error(404, {
+      message: "Could not fetch the token. Please login again",
+    });
+  }
+
+  const client = fetchClient(session);
+
   const limit = 15;
   const currentPage = Math.max(Number(url.searchParams.get("page") || 1), 1);
   const search = url.searchParams.get("search") || "";
   const filter = url.searchParams.get("filter") || "";
-
-  if (limit > 15) {
-    throw error(404, {
-      message: "Bad Request",
-    });
-  }
-
-  const session = cookies.get("session");
-  if (!session) {
-    throw error(404, {
-      message: "Are you logged in?",
-    });
-  }
-  const client = fetchClient(session);
 
   try {
     const feedsList = await client.getFeeds({
@@ -33,7 +28,7 @@ export const load: PageServerLoad = async ({ locals, cookies, url }) => {
       [filter]: search,
     });
 
-    const feeds = await feedsList.data;
+    const feeds = feedsList.data;
 
     return {
       feeds: feeds ? feeds : [],
