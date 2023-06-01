@@ -1,4 +1,4 @@
-const { fontFamily } = require("tailwindcss/defaultTheme")
+const { fontFamily } = require("tailwindcss/defaultTheme");
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
@@ -53,9 +53,9 @@ module.exports = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        sans: [...fontFamily.sans]
-      }
-    }
+        sans: ["Inter var", ...fontFamily.sans],
+      },
+    },
   },
   plugins: [require("tailwindcss-animate")],
-}
+};
