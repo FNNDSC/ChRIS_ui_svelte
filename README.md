@@ -1,4 +1,4 @@
-# create-svelte
+# ChRIS UI
 
 ![Screenshot from 2023-06-01 17-41-13](https://github.com/FNNDSC/ChRIS_ui_svelte/assets/15992276/14c4a727-42c8-49ce-8516-93a309a43cf8)
 
