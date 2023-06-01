@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { uploadStatus } from "$lib/stores/uploadStore";
+  import { uploadStore } from "$lib/stores/uploadStore";
   import { fetchClient } from "$lib/utils/client";
   import axios from "axios";
   import type { AxiosProgressEvent } from "axios";
@@ -19,6 +19,7 @@
       const directoryToUpload = `${data.user.name}/uploads/${
         folderName || "No-Name-Client"
       }/`;
+      uploadStore.showNotifiction();
       const filePromises = fileList.map((file) => {
         const formData = new FormData();
         const name = file.name;
@@ -31,7 +32,7 @@
             onUploadProgress: (progressEvent: AxiosProgressEvent) => {
               if (progressEvent && progressEvent.progress) {
                 const progress = Math.round(progressEvent.progress * 100);
-                uploadStatus.setStatus(file.name, progress);
+                uploadStore.setStatus(file.name, progress);
               }
             },
           };

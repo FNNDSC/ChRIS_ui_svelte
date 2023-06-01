@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { uploadStatus } from "$lib/stores/uploadStore";
+  import { uploadStore } from "$lib/stores/uploadStore";
   import { Transition } from "svelte-transition";
 </script>
 
@@ -23,7 +23,7 @@
         <div class="p-4">
           <div class="flex items-start">
             <div class="ml-3 w-0 flex-1 pt-0.5">
-              {#each [...$uploadStatus] as [key, value]}
+              {#each [...$uploadStore.uploadStatus] as [key, value]}
                 <p class="mt-1 text-sm text-gray-500">
                   {key} - {value}
                 </p>
@@ -36,6 +36,9 @@
                   >Undo</button
                 >
                 <button
+                  on:click={() => {
+                    uploadStore.showNotifiction();
+                  }}
                   type="button"
                   class="rounded-md bg-white text-sm font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                   >Dismiss</button
@@ -45,7 +48,7 @@
             <div class="ml-4 flex flex-shrink-0">
               <button
                 on:click={() => {
-                  uploadStatus.reset();
+                  uploadStore.reset();
                 }}
                 type="button"
                 class="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"

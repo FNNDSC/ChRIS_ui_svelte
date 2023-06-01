@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { uploadStatus } from "$lib/stores/uploadStore";
+  import { uploadStore } from "$lib/stores/uploadStore";
   import Notifcation from "$lib/components/Notification/Notifcation.svelte";
   import { createDialog, createMenu } from "svelte-headlessui";
   import { Transition } from "svelte-transition";
@@ -361,7 +361,7 @@
             <div class="text-xs font-semibold leading-6 text-gray-400">
               Your Data
             </div>
-            <ul  class="-mx-2 mt-2 space-y-1">
+            <ul class="-mx-2 mt-2 space-y-1">
               <li>
                 <!-- Current: "bg-gray-800 text-white", Default: "text-gray-400 hover:text-white hover:bg-gray-800" -->
                 <a
@@ -435,24 +435,38 @@
         <div class="flex flex-1" />
         <div class="flex items-center gap-x-4 lg:gap-x-6">
           <button
+            on:click={() => uploadStore.showNotifiction()}
             type="button"
             class="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500"
           >
-            <span class="sr-only">View notifications</span>
-            <svg
-              class="h-6 w-6"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              aria-hidden="true"
+            <span
+              class="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-xs font-medium text-white ring-1 ring-inset ring-gray-800"
             >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
-              />
-            </svg>
+              {#if $uploadStore.uploadStatus.size > 0}
+                <svg
+                  class="h-1.5 w-1.5 fill-purple-400"
+                  viewBox="0 0 6 6"
+                  aria-hidden="true"
+                >
+                  <circle cx="3" cy="3" r="3" />
+                </svg>
+              {/if}
+
+              <svg
+                class="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
+                />
+              </svg>
+            </span>
           </button>
 
           <!-- Separator -->
@@ -530,7 +544,7 @@
 
     <main>
       <slot />
-      {#if $uploadStatus.size > 0}
+      {#if $uploadStore.isOpen}
         <Notifcation />
       {/if}
     </main>
