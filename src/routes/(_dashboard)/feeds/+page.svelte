@@ -31,9 +31,9 @@
 	let selected = filter || options[0].value;
 </script>
 
-<div class="bg-gray-900">
+<div>
 	<div class="mx-auto">
-		<div class="bg-gray-900 py-10">
+		<div class="py-10">
 			<div class="px-4 sm:px-6 lg:px-8">
 				<div class="sm:flex sm:items-center">
 					<div class="sm:flex-auto">

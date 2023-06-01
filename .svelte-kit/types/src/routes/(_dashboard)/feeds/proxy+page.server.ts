@@ -1,7 +1,7 @@
 // @ts-nocheck
 import type { PageServerLoad } from "./$types";
 import { redirect, error } from "@sveltejs/kit";
-import { fetchClient } from "$lib/utils/client";
+import { fetchClient } from "$lib/client";
 
 export const load = async ({ locals, cookies, url }: Parameters<PageServerLoad>[0]) => {
   if (!locals.user) {

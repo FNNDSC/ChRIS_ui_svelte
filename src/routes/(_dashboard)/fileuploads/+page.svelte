@@ -1,6 +1,6 @@
 <script lang="ts">
   import { uploadStore } from "$lib/stores/uploadStore";
-  import { fetchClient } from "$lib/utils/client";
+  import { fetchClient } from "$lib/client";
   import axios from "axios";
   import type { AxiosProgressEvent } from "axios";
   import type { PageData } from "./$types";

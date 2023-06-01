@@ -2,11 +2,6 @@
 // for information about these interfaces
 declare global {
 	namespace App {
-		 interface Error {}
-		// interface Locals {}
-		// interface PageData {}
-		// interface Platform {}
-
 		interface Locals {
 			user: {
 				name: string;
@@ -15,5 +10,7 @@ declare global {
 	}
 }
 
+declare module 'svelte-headlessui'
+declare module 'svelte-transition'
 
 export {};

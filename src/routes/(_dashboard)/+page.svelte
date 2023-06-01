@@ -24,7 +24,7 @@
   ];
 </script>
 
-<div class="bg-gray-900">
+
   <main>
     <div class="relative isolate overflow-hidden">
       <svg
@@ -258,4 +258,4 @@
       </div>
     </div>
   </footer>
-</div>
+

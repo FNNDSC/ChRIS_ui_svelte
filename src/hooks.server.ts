@@ -1,5 +1,5 @@
 import type { Handle } from "@sveltejs/kit";
-import { fetchClient } from "$lib/utils/client";
+import { fetchClient } from "$lib/client";
 
 export const handle: Handle = async ({ event, resolve }) => {
   // get cookies from browser
