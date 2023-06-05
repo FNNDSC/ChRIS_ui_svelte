@@ -1,6 +1,9 @@
 <script lang="ts">
   import { uploadStore } from "$lib/stores/uploadStore";
+  import { FolderIcon } from "lucide-svelte";
   import { Transition } from "svelte-transition";
+
+  $: console.log($uploadStore);
 </script>
 
 <div
@@ -23,11 +26,18 @@
         <div class="p-4">
           <div class="flex items-start">
             <div class="ml-3 w-0 flex-1 pt-0.5">
-              {#each [...$uploadStore.uploadStatus] as [key, value]}
+              {#each [...$uploadStore.uploadStatusForFiles] as [key, value]}
                 <p class="mt-1 text-sm text-gray-500">
                   {key} - {value}
                 </p>
               {/each}
+              {#if $uploadStore.uploadStatusForFolders.name}
+                <p class="mt-1 text-sm text-gray-500">
+                  {$uploadStore.uploadStatusForFolders.name} - {$uploadStore
+                    .uploadStatusForFolders.done}/
+                  {$uploadStore.uploadStatusForFolders.total}
+                </p>
+              {/if}
 
               <div class="mt-3 flex space-x-7">
                 <button

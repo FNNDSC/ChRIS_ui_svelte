@@ -17,13 +17,13 @@ export const nodes = [
 export const server_loads = [2];
 
 export const dictionary = {
-		"/(_dashboard)": [~4,[2],[3]],
-		"/(_dashboard)/feeds": [~5,[2],[3]],
-		"/(_dashboard)/fileuploads": [~6,[2],[3]],
+		"/(_main)": [~4,[2],[3]],
+		"/(_main)/feeds": [~5,[2],[3]],
+		"/(_main)/fileuploads": [~6,[2],[3]],
 		"/(auth)/login": [~9],
 		"/(auth)/register": [~10],
-		"/(_dashboard)/uploads": [~7,[2],[3]],
-		"/(_dashboard)/uploads/[...slug]": [~8,[2],[3]]
+		"/(_main)/uploads": [~7,[2],[3]],
+		"/(_main)/uploads/[...slug]": [~8,[2],[3]]
 	};
 
 export const hooks = {
