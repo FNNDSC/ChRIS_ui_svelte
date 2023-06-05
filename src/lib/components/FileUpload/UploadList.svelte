@@ -1,7 +1,12 @@
 <script lang="ts">
   import { Button } from "$components/ui/button/";
+  import { createEventDispatcher } from "svelte";
   export let name: string;
   export let size: number;
+  export let item:File | FileList;
+  export let itemType: string;
+
+  const dispatch = createEventDispatcher();
 </script>
 
 <li class="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6">
@@ -24,6 +29,13 @@
     </div>
   </div>
   <div class="ml-4 flex-shrink-0">
-    <Button variant="destructive">Delete</Button>
+    <Button
+      on:click={() =>
+        dispatch("delete", {
+          item,
+          itemType,
+        })}
+      variant="destructive">Delete</Button
+    >
   </div>
 </li>

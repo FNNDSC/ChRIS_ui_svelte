@@ -3,7 +3,7 @@
   import { fetchClient } from "$lib/client";
   import { Button } from "$components/ui/button/";
   import { Input } from "$components/ui/input";
-  import { UploadList, ImageIcon } from "$components/FileUpload/";
+  import { UploadList, ImageIcon, Label } from "$components/FileUpload/";
   import axios from "axios";
   import type { AxiosProgressEvent } from "axios";
   import type { PageData } from "./$types";
@@ -23,6 +23,7 @@
   let folderName = "";
 
   async function handleSubmit() {
+    console.log("Handle Submit", handleSubmit);
     if (data.token) {
       const client = fetchClient(data.token);
 
@@ -78,9 +79,25 @@
       }
     }
   }
+
+  function handleDelete(e: any) {
+    e.preventDefault();
+    const { item, itemType } = e.detail;
+
+    if (itemType === "file") {
+      files = Array.from(files).filter(
+        (file) =>
+          file.name !== item.name && file.lastModified !== item.lastModified
+      ) as unknown as FileList;
+    }
+
+    if (itemType === "folder") {
+      folder= null as unknown as FileList;
+    }
+  }
 </script>
 
-<form class="sm:ml-4 lg:ml-8" on:submit|preventDefault={handleSubmit}>
+<form class="sm:ml-4 lg:ml-8">
   <div class="space-y-12">
     <div class="border-b border-white/10 pb-12">
       <h2 class="text-base font-semibold leading-7 text-white">File Uploads</h2>
@@ -91,11 +108,8 @@
 
       <div class="mt-2 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
         <div class="sm:col-span-4">
-          <label
-            for="username"
-            class="block text-sm font-medium leading-6 text-white"
-            >Folder Name</label
-          >
+          <Label labelFor="username" name="Folder Name" />
+
           <div class="mt-2">
             <div
               class="flex rounded-md bg-white/5 ring-1 ring-inset ring-white/10 focus-within:ring-2 focus-within:ring-inset focus-within:ring-indigo-500"
@@ -109,11 +123,8 @@
         </div>
 
         <div class="sm:col-span-4">
-          <label
-            for="cover-photo"
-            class="block text-sm font-medium leading-6 text-white"
-            >Upload Your File</label
-          >
+          <Label labelFor="cover-photo" name="Upload Your File" />
+
           <div
             class="mt-2 flex justify-center rounded-lg border border-dashed border-white/25 px-6 py-10"
           >
@@ -126,6 +137,7 @@
                   label="folder-upload"
                   bind:files={folder}
                   on:change={handleOnChange}
+                  multiple={false}
                 />
                 <p class="pl-1 pr-1">or</p>
                 <FileInput
@@ -133,6 +145,7 @@
                   isDirectory={false}
                   label="file-upload"
                   bind:files
+                  multiple={true}
                 />
               </div>
             </div>
@@ -140,23 +153,32 @@
         </div>
 
         <div class="h-96 overflow-auto sm:col-span-4">
-          <label
-            for="cover-photo"
-            class="block text-sm font-medium leading-6 text-white"
-            >Your Attachments</label
-          >
+          <Label labelFor="upload-list" name="Your Attachments" />
+
           <div class="mt-2 text-sm text-white sm:col-span-2">
             <ul
               class="divide-y divide-white/10 rounded-md border border-white/20"
             >
               {#if files}
                 {#each Array.from(files) as file (file)}
-                  <UploadList name={file.name} size={file.size} />
+                  <UploadList
+                    on:delete={handleDelete}
+                    name={file.name}
+                    size={file.size}
+                    item={file}
+                    itemType="file"
+                  />
                 {/each}
               {/if}
 
               {#if folder}
-                <UploadList bind:name={folderToDownload} size={0} />
+                <UploadList
+                  on:delete={handleDelete}
+                  bind:name={folderToDownload}
+                  size={0}
+                  item={folder}
+                  itemType="folder"
+                />
               {/if}
 
               {#if !folder && !files}
@@ -175,6 +197,6 @@
 
   <div class="mt-2 flex items-center gap-x-6">
     <Button variant="ghost">Cancel</Button>
-    <Button variant="default">Save</Button>
+    <Button on:click={handleSubmit} variant="default">Save</Button>
   </div>
 </form>

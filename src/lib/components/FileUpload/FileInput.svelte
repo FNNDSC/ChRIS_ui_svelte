@@ -3,6 +3,7 @@
   export let heading: string;
   export let label: string;
   export let files: FileList;
+  export let multiple: boolean;
 </script>
 
 <label
@@ -17,5 +18,6 @@
     class="sr-only"
     bind:files
     webkitdirectory={isDirectory ? true : null}
+    {multiple}
   />
 </label>
