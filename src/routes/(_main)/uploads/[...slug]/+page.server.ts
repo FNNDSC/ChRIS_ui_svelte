@@ -27,6 +27,11 @@ export const load: PageServerLoad = async ({ locals, cookies, params }) => {
   const uploads = await client.getFileBrowserPaths({
     path: params.slug,
   });
+  const pathList = await client.getFileBrowserPath(params.slug);
+  const fileList = await pathList.getFiles({
+    limit: 1000,
+    offset: 0,
+  });
 
   const parsedUpload =
     uploads.data && uploads.data[0].subfolders
@@ -40,17 +45,11 @@ export const load: PageServerLoad = async ({ locals, cookies, params }) => {
     };
   });
 
-  const pathList = await client.getFileBrowserPath(params.slug);
-
-  const fileList = await pathList.getFiles({
-    limit: 1000,
-    offset: 0,
-  });
-
   const files = fileList.data ? fileList.data : [];
 
   return {
     folders,
     files,
+    token: session,
   };
 };

@@ -5,8 +5,8 @@
 		"src/routes/(_main)/+layout.server.ts"
 	],
 	"/": [],
-	"/(_main)/feeds": [
-		"src/routes/(_main)/feeds/+page.server.ts",
+	"/(_main)/analyses": [
+		"src/routes/(_main)/analyses/+page.server.ts",
 		"src/routes/(_main)/+layout.server.ts"
 	],
 	"/(_main)/fileuploads": [

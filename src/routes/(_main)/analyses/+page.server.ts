@@ -1,5 +1,5 @@
 import type { PageServerLoad } from "./$types";
-import { redirect, error, fail } from "@sveltejs/kit";
+import { redirect, error, } from "@sveltejs/kit";
 import { fetchClient } from "$lib/client";
 
 export const load: PageServerLoad = async ({ locals, cookies, url }) => {

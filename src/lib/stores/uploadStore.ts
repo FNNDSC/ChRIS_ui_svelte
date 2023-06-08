@@ -1,15 +1,19 @@
 import { writable } from "svelte/store";
 
-function setStatusForUploads() {
-  const { subscribe, set, update } = writable({
+function getInitialStatus() {
+  return {
     isOpen: false,
-    uploadStatusForFiles: new Map(),
-    uploadStatusForFolders: {
+    fileStatus: new Map(),
+    folderStatus: {
       total: 0,
       done: 0,
       name: "",
     },
-  });
+  };
+}
+
+function setStatusForUploads() {
+  const { subscribe, set, update } = writable(getInitialStatus());
 
   return {
     subscribe,
@@ -17,7 +21,7 @@ function setStatusForUploads() {
       update((status) => {
         return {
           ...status,
-          uploadStatus: status.uploadStatusForFiles.set(fileName, progress),
+          fileStatus: status.fileStatus.set(fileName, progress),
         };
       }),
 
@@ -25,8 +29,8 @@ function setStatusForUploads() {
       update((status) => {
         return {
           ...status,
-          uploadStatusForFolders: {
-            ...status.uploadStatusForFolders,
+          folderStatus: {
+            ...status.folderStatus,
             name,
             total,
           },
@@ -37,14 +41,14 @@ function setStatusForUploads() {
       update((status) => {
         return {
           ...status,
-          uploadStatusForFolders: {
-            ...status.uploadStatusForFolders,
+          folderStatus: {
+            ...status.folderStatus,
             done,
           },
         };
       });
     },
-    showNotifiction: () => {
+    showNotification: () => {
       update((status) => {
         return {
           ...status,
@@ -52,16 +56,7 @@ function setStatusForUploads() {
         };
       });
     },
-    reset: () =>
-      set({
-        isOpen: false,
-        uploadStatusForFolders: {
-          total: 0,
-          done: 0,
-          name: "",
-        },
-        uploadStatusForFiles: new Map(),
-      }),
+    reset: () => set(getInitialStatus()),
   };
 }
 

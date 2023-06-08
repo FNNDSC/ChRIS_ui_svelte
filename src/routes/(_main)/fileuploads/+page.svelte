@@ -43,7 +43,7 @@
         const directoryToUpload = `${data.user.name}/uploads/${
           folderName || "No-Name-Client"
         }/`;
-        uploadStore.showNotifiction();
+        uploadStore.showNotification();
         isFolderUpload &&
           uploadStore.setFolderDetails(folder.length, folderToDownload);
 
@@ -92,7 +92,7 @@
     }
 
     if (itemType === "folder") {
-      folder= null as unknown as FileList;
+      folder = null as unknown as FileList;
     }
   }
 </script>
@@ -130,73 +130,56 @@
           >
             <div class="text-center">
               <ImageIcon />
-              <div class="mt-4 flex text-sm leading-6 text-gray-400">
-                <FileInput
-                  heading="Upload a Folder"
-                  isDirectory={true}
-                  label="folder-upload"
-                  bind:files={folder}
-                  on:change={handleOnChange}
-                  multiple={false}
-                />
-                <p class="pl-1 pr-1">or</p>
-                <FileInput
-                  heading="Upload a File"
-                  isDirectory={false}
-                  label="file-upload"
-                  bind:files
-                  multiple={true}
-                />
-              </div>
+              <div class="mt-4 flex text-sm leading-6 text-gray-400" />
             </div>
           </div>
-        </div>
 
-        <div class="h-96 overflow-auto sm:col-span-4">
-          <Label labelFor="upload-list" name="Your Attachments" />
+          <div class="h-96 overflow-auto sm:col-span-4">
+            <Label labelFor="upload-list" name="Your Attachments" />
 
-          <div class="mt-2 text-sm text-white sm:col-span-2">
-            <ul
-              class="divide-y divide-white/10 rounded-md border border-white/20"
-            >
-              {#if files}
-                {#each Array.from(files) as file (file)}
+            <div class="mt-2 text-sm text-white sm:col-span-2">
+              <ul
+                class="divide-y divide-white/10 rounded-md border border-white/20"
+              >
+                {#if files}
+                  {#each Array.from(files) as file (file)}
+                    <UploadList
+                      on:delete={handleDelete}
+                      name={file.name}
+                      size={file.size}
+                      item={file}
+                      itemType="file"
+                    />
+                  {/each}
+                {/if}
+
+                {#if folder}
                   <UploadList
                     on:delete={handleDelete}
-                    name={file.name}
-                    size={file.size}
-                    item={file}
-                    itemType="file"
+                    bind:name={folderToDownload}
+                    size={0}
+                    item={folder}
+                    itemType="folder"
                   />
-                {/each}
-              {/if}
+                {/if}
 
-              {#if folder}
-                <UploadList
-                  on:delete={handleDelete}
-                  bind:name={folderToDownload}
-                  size={0}
-                  item={folder}
-                  itemType="folder"
-                />
-              {/if}
-
-              {#if !folder && !files}
-                <li
-                  class="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6"
-                >
-                  No attachments
-                </li>
-              {/if}
-            </ul>
+                {#if !folder && !files}
+                  <li
+                    class="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6"
+                  >
+                    No attachments
+                  </li>
+                {/if}
+              </ul>
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
 
-  <div class="mt-2 flex items-center gap-x-6">
-    <Button variant="ghost">Cancel</Button>
-    <Button on:click={handleSubmit} variant="default">Save</Button>
+    <div class="mt-2 flex items-center gap-x-6">
+      <Button variant="ghost">Cancel</Button>
+      <Button on:click={handleSubmit} variant="default">Save</Button>
+    </div>
   </div>
 </form>

@@ -119,7 +119,7 @@
 
                       <li>
                         <a
-                          href="/"
+                          href="/analyses"
                           class="text-gray-400 hover:text-white hover:bg-gray-800 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                         >
                           <svg
@@ -205,7 +205,7 @@
                       </li>
                       <li>
                         <a
-                          href="/"
+                          href="/feeds"
                           class="text-gray-400 hover:text-white hover:bg-gray-800 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                         >
                           <span
@@ -217,7 +217,7 @@
                       </li>
                       <li>
                         <a
-                          href="/"
+                          href="/pacs"
                           class="text-gray-400 hover:text-white hover:bg-gray-800 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                         >
                           <span
@@ -291,7 +291,7 @@
 
               <li>
                 <a
-                  href="/feeds"
+                  href="/analyses"
                   class="text-gray-400 hover:text-white hover:bg-gray-800 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
                 >
                   <svg
@@ -435,14 +435,14 @@
         <div class="flex flex-1" />
         <div class="flex items-center gap-x-4 lg:gap-x-6">
           <button
-            on:click={() => uploadStore.showNotifiction()}
+            on:click={() => uploadStore.showNotification()}
             type="button"
             class="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500"
           >
             <span
               class="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-xs font-medium text-white ring-1 ring-inset ring-gray-800"
             >
-              {#if $uploadStore.uploadStatusForFiles.size > 0}
+              {#if $uploadStore.fileStatus.size > 0}
                 <svg
                   class="h-1.5 w-1.5 fill-purple-400"
                   viewBox="0 0 6 6"
