@@ -4,6 +4,8 @@
   import ButtonIcon from "./ButtonIcon.svelte";
   import RadialProgress from "./RadialProgress.svelte";
   import { Check } from "lucide-svelte";
+
+  $: console.log($uploadStore.folderStatus);
 </script>
 
 <div
@@ -38,24 +40,25 @@
               text="Close"
               iconType="close"
             />
-          </div>
 
-          {#if $uploadStore.fileStatus.size > 0}
-            {#each [...$uploadStore.fileStatus] as [key, value] (key)}
+            {#if $uploadStore.folderStatus.name}
               <div class="mt-8 flex items-center">
                 <div class="mr-2 flex flex-shrink-0">
-                  <ButtonIcon text="Close" iconType="file" />
+                  <ButtonIcon text="Close" iconType="folder" />
                 </div>
                 <div class="flex w-0 flex-1 justify-between">
                   <p class="w-0 flex-1 text-sm font-medium truncate text-white">
-                    {key}
+                    {$uploadStore.folderStatus.name}
                   </p>
                 </div>
                 <div class="ml-4 flex flex-shrink-0">
-                  {#if value === 100}
+                  {#if $uploadStore.folderStatus.done === $uploadStore.folderStatus.total}
                     <Check class="h-5 w-5 text-green-400" />
                   {:else}
-                    <RadialProgress {value} />
+                    <p>
+                      {$uploadStore.folderStatus.done}/{$uploadStore
+                        .folderStatus.total}
+                    </p>
                   {/if}
                 </div>
 
@@ -63,10 +66,38 @@
                   <ButtonIcon text="" iconType="close" />
                 </div>
               </div>
-            {/each}
-          {/if}
+            {/if}
+
+            {#if $uploadStore.fileStatus.size > 0}
+              {#each [...$uploadStore.fileStatus] as [key, value] (key)}
+                <div class="mt-8 flex items-center">
+                  <div class="mr-2 flex flex-shrink-0">
+                    <ButtonIcon text="Close" iconType="file" />
+                  </div>
+                  <div class="flex w-0 flex-1 justify-between">
+                    <p
+                      class="w-0 flex-1 text-sm font-medium truncate text-white"
+                    >
+                      {key}
+                    </p>
+                  </div>
+                  <div class="ml-4 flex flex-shrink-0">
+                    {#if value === 100}
+                      <Check class="h-5 w-5 text-green-400" />
+                    {:else}
+                      <RadialProgress {value} />
+                    {/if}
+                  </div>
+
+                  <div class="ml-2 flex flex-shrink-0">
+                    <ButtonIcon text="" iconType="close" />
+                  </div>
+                </div>
+              {/each}
+            {/if}
+          </div>
         </div>
-      </div>
-    </Transition>
+      </div></Transition
+    >
   </div>
 </div>

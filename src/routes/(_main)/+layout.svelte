@@ -161,28 +161,6 @@
                           Create a New Analysis
                         </a>
                       </li>
-                      <li>
-                        <a
-                          href="/fileuploads"
-                          class="text-gray-400 hover:text-white hover:bg-gray-800 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                        >
-                          <svg
-                            class="h-6 w-6 shrink-0"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke-width="1.5"
-                            stroke="currentColor"
-                            aria-hidden="true"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z"
-                            />
-                          </svg>
-                          File Uploads
-                        </a>
-                      </li>
                     </ul>
                   </li>
                   <li>
@@ -331,28 +309,6 @@
                     />
                   </svg>
                   Create Analyses
-                </a>
-              </li>
-              <li>
-                <a
-                  href="/fileuploads"
-                  class="text-gray-400 hover:text-white hover:bg-gray-800 group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold"
-                >
-                  <svg
-                    class="h-6 w-6 shrink-0"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke-width="1.5"
-                    stroke="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M7.5 14.25v2.25m3-4.5v4.5m3-6.75v6.75m3-9v9M6 20.25h12A2.25 2.25 0 0020.25 18V6A2.25 2.25 0 0018 3.75H6A2.25 2.25 0 003.75 6v12A2.25 2.25 0 006 20.25z"
-                    />
-                  </svg>
-                  File Uploads
                 </a>
               </li>
             </ul>

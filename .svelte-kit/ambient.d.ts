@@ -26,7 +26,6 @@
  * ```
  */
 declare module '$env/static/private' {
-	export const SESSION_SECRET: string;
 	export const npm_lib: string;
 	export const LANGUAGE: string;
 	export const local_scripts: string;
@@ -98,7 +97,6 @@ declare module '$env/static/private' {
 	export const OOO_FORCE_DESKTOP: string;
 	export const self_bin: string;
 	export const XDG_RUNTIME_DIR: string;
-	export const ZEITGEIST_DATA_PATH: string;
 	export const DISPLAY: string;
 	export const SDKEYDIR: string;
 	export const LANG: string;
@@ -162,7 +160,9 @@ declare module '$env/static/private' {
  * ```
  */
 declare module '$env/static/public' {
-	
+	export const PUBLIC_API_URL: string;
+	export const PUBLIC_USERS_URL: string;
+	export const PUBLIC_AUTH_URL: string;
 }
 
 /**
@@ -179,7 +179,6 @@ declare module '$env/static/public' {
  */
 declare module '$env/dynamic/private' {
 	export const env: {
-		SESSION_SECRET: string;
 		npm_lib: string;
 		LANGUAGE: string;
 		local_scripts: string;
@@ -251,7 +250,6 @@ declare module '$env/dynamic/private' {
 		OOO_FORCE_DESKTOP: string;
 		self_bin: string;
 		XDG_RUNTIME_DIR: string;
-		ZEITGEIST_DATA_PATH: string;
 		DISPLAY: string;
 		SDKEYDIR: string;
 		LANG: string;
@@ -320,6 +318,9 @@ declare module '$env/dynamic/private' {
  */
 declare module '$env/dynamic/public' {
 	export const env: {
+		PUBLIC_API_URL: string;
+		PUBLIC_USERS_URL: string;
+		PUBLIC_AUTH_URL: string;
 		[key: `PUBLIC_${string}`]: string | undefined;
 	}
 }
