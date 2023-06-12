@@ -5,6 +5,7 @@ import { z } from "zod";
 import { superValidate } from "sveltekit-superforms/server";
 import { PUBLIC_AUTH_URL } from "$env/static/public";
 
+
 const schema = z.object({
   username: z.string(),
   password: z.string(),
@@ -21,7 +22,6 @@ export const load: PageServerLoad = async ({ locals, request }) => {
 };
 
 const login: Action = async ({ cookies, request }: any) => {
-  console.log("Login called")
   const form = await superValidate(request, schema);
 
   if (!form.valid) {
@@ -30,7 +30,7 @@ const login: Action = async ({ cookies, request }: any) => {
 
   const authURL = PUBLIC_AUTH_URL;
 
-  console.log(authURL);
+  
 
   try {
     const token = await Client.getAuthToken(

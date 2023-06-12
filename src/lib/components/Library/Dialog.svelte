@@ -12,14 +12,19 @@
   import { Input } from "$components/ui/input";
   import { Label } from "$components/ui/label";
 
-  let value: string;
+  export let open: boolean;
+  export let value: string;
+  export let handleDialogToggle: () => void;
   export let handleSave: () => void;
 </script>
 
-<Dialog modal={true}>
+<Dialog bind:open modal={true}>
   <DialogTrigger>
-    <Button variant="outline">Create a Folder</Button>
+    <Button on:click={handleDialogToggle} variant="outline"
+      >Create a Folder</Button
+    >
   </DialogTrigger>
+
   <DialogContent class="sm:max-w-[425px]">
     <DialogHeader>
       <DialogTitle>Create a Folder</DialogTitle>
@@ -27,7 +32,7 @@
         Give your folder a name. Click save when you're done.
       </DialogDescription>
     </DialogHeader>
-    
+
     <div class="grid gap-4 py-4">
       <div class="grid grid-cols-4 items-center gap-4">
         <Label class="text-right">Name</Label>

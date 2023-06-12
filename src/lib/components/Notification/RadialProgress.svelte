@@ -10,8 +10,6 @@
 
   export let value = 0;
 
-  $:console.log(value);
-
   $: setProgress(value);
 </script>
 

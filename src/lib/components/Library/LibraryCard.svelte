@@ -55,7 +55,6 @@
         <div use:menu.item>
           <button
             on:click|stopPropagation={() => {
-              console.log("Clicked Download");
               menu.close();
             }}
             use:menu.item

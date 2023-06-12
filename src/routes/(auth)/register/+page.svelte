@@ -4,6 +4,7 @@
   import type { PageData } from "./$types";
 
   import { superForm } from "sveltekit-superforms/client";
+  import { goto } from "$app/navigation";
 
   export let data: PageData;
 
@@ -91,7 +92,12 @@
 
     <p class="mt-10 text-center text-sm text-gray-400">
       Have an account already?
-      <Button variant="link" href="/login">Sign in</Button>
+      <Button
+        on:click={() => {
+          goto("/login");
+        }}
+        variant="link">Sign in</Button
+      >
     </p>
   </div>
 </div>

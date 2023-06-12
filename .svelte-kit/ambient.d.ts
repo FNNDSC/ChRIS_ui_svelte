@@ -97,6 +97,7 @@ declare module '$env/static/private' {
 	export const OOO_FORCE_DESKTOP: string;
 	export const self_bin: string;
 	export const XDG_RUNTIME_DIR: string;
+	export const ZEITGEIST_DATA_PATH: string;
 	export const DISPLAY: string;
 	export const SDKEYDIR: string;
 	export const LANG: string;
@@ -250,6 +251,7 @@ declare module '$env/dynamic/private' {
 		OOO_FORCE_DESKTOP: string;
 		self_bin: string;
 		XDG_RUNTIME_DIR: string;
+		ZEITGEIST_DATA_PATH: string;
 		DISPLAY: string;
 		SDKEYDIR: string;
 		LANG: string;

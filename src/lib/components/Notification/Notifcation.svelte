@@ -4,8 +4,7 @@
   import ButtonIcon from "./ButtonIcon.svelte";
   import RadialProgress from "./RadialProgress.svelte";
   import { Check } from "lucide-svelte";
-
-  $: console.log($uploadStore.folderStatus);
+  import DisplayDetails from "./DisplayDetails.svelte";
 </script>
 
 <div
@@ -36,68 +35,63 @@
             </p>
 
             <ButtonIcon
-              on:click={() => uploadStore.showNotification()}
+              on:click={() => uploadStore.toggleNotification()}
               text="Close"
               iconType="close"
             />
+          </div>
 
-            {#if $uploadStore.folderStatus.name}
-              <div class="mt-8 flex items-center">
-                <div class="mr-2 flex flex-shrink-0">
-                  <ButtonIcon text="Close" iconType="folder" />
-                </div>
-                <div class="flex w-0 flex-1 justify-between">
-                  <p class="w-0 flex-1 text-sm font-medium truncate text-white">
-                    {$uploadStore.folderStatus.name}
+          {#if $uploadStore.folderStatus.name}
+            <DisplayDetails>
+              <ButtonIcon slot="icon" text="Close" iconType="folder" />
+              <p
+                slot="key"
+                class="w-0 flex-1 text-sm font-medium truncate text-white"
+              >
+                {$uploadStore.folderStatus.name}
+              </p>
+
+              <svelte:fragment slot="progress">
+                {#if $uploadStore.folderStatus.done === $uploadStore.folderStatus.total}
+                  <Check class="h-5 w-5 text-green-400" />
+                {:else}
+                  <p class="text-sm font-medium truncate text-gray-400">
+                    {$uploadStore.folderStatus.done}/{$uploadStore.folderStatus
+                      .total}
                   </p>
-                </div>
-                <div class="ml-4 flex flex-shrink-0">
-                  {#if $uploadStore.folderStatus.done === $uploadStore.folderStatus.total}
+                {/if}
+              </svelte:fragment>
+
+              <ButtonIcon slot="close" text="" iconType="close" />
+            </DisplayDetails>
+          {/if}
+
+          {#if $uploadStore.fileStatus.size > 0}
+            {#each [...$uploadStore.fileStatus] as [key, value] (key)}
+              <DisplayDetails>
+                <ButtonIcon slot="icon" text="Close" iconType="file" />
+
+                <p
+                  slot="key"
+                  class="w-0 flex-1 text-sm font-medium truncate text-white"
+                >
+                  {key}
+                </p>
+
+                <svelte:fragment slot="progress">
+                  {#if value === 100}
                     <Check class="h-5 w-5 text-green-400" />
                   {:else}
-                    <p>
-                      {$uploadStore.folderStatus.done}/{$uploadStore
-                        .folderStatus.total}
-                    </p>
+                    <RadialProgress {value} />
                   {/if}
-                </div>
+                </svelte:fragment>
 
-                <div class="ml-2 flex flex-shrink-0">
-                  <ButtonIcon text="" iconType="close" />
-                </div>
-              </div>
-            {/if}
-
-            {#if $uploadStore.fileStatus.size > 0}
-              {#each [...$uploadStore.fileStatus] as [key, value] (key)}
-                <div class="mt-8 flex items-center">
-                  <div class="mr-2 flex flex-shrink-0">
-                    <ButtonIcon text="Close" iconType="file" />
-                  </div>
-                  <div class="flex w-0 flex-1 justify-between">
-                    <p
-                      class="w-0 flex-1 text-sm font-medium truncate text-white"
-                    >
-                      {key}
-                    </p>
-                  </div>
-                  <div class="ml-4 flex flex-shrink-0">
-                    {#if value === 100}
-                      <Check class="h-5 w-5 text-green-400" />
-                    {:else}
-                      <RadialProgress {value} />
-                    {/if}
-                  </div>
-
-                  <div class="ml-2 flex flex-shrink-0">
-                    <ButtonIcon text="" iconType="close" />
-                  </div>
-                </div>
-              {/each}
-            {/if}
-          </div>
+                <ButtonIcon slot="close" text="" iconType="close" />
+              </DisplayDetails>
+            {/each}
+          {/if}
         </div>
-      </div></Transition
-    >
+      </div>
+    </Transition>
   </div>
 </div>

@@ -48,7 +48,16 @@ function setStatusForUploads() {
         };
       });
     },
-    showNotification: () => {
+
+    newNotification: () => {
+      update((status) => {
+        return {
+          ...status,
+          isOpen: true,
+        };
+      });
+    },
+    toggleNotification: () => {
       update((status) => {
         return {
           ...status,

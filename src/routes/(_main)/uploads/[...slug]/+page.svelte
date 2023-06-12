@@ -12,11 +12,14 @@
   import { invalidateAll } from "$app/navigation";
 
   export let data: PageData;
+  let open = false;
   let fileInput: any;
   let folderInput: any;
-
+  let newFolder: string;
   $: pathname = $page.url.pathname;
   $: currentPath = pathname.substring(9);
+
+  $: console.log($uploadStore);
 
   function handleFolderChange(e: any) {
     const folder = e.target.files;
@@ -34,18 +37,47 @@
     return fileName;
   }
 
-  function createNewFolder() {
-    console.log("Creating");
+  async function clientSetup() {
+    const token = data.token;
+    const client = fetchClient(token);
+    await client.setUrls();
+    return { client, token };
+  }
+
+  async function createNewFolder() {
+    const { client, token } = await clientSetup();
+
+    if (!newFolder) {
+      newFolder = "Untitled";
+    }
+
+    const content = "Welcome";
+    const file = new Blob([content], { type: "text/plain" });
+    const path = `${currentPath}/${newFolder}`;
+    const formData = new FormData();
+    formData.append("upload_path", `${path}/Welcome.txt`);
+    formData.append("fname", file, "Welcome.txt");
+
+    try {
+      const config = {
+        headers: { Authorization: "Token " + token },
+      };
+      await axios.post(client.uploadedFilesUrl, formData, config);
+      invalidateAll();
+    } catch (error) {
+      console.log("Error", error);
+    }
+
+    open = !open;
+    newFolder = "";
   }
 
   async function handleSubmit(folder: boolean, files: FileList) {
-    const token = data.token;
     const items = Array.from(files);
+    const { client, token } = await clientSetup();
 
-    const client = fetchClient(token);
-    await client.setUrls();
     const url = client.uploadedFilesUrl;
-    uploadStore.showNotification();
+    uploadStore.newNotification();
     const folderName = items[0].webkitRelativePath.split("/")[0];
     folder && uploadStore.setFolderDetails(items.length, folderName);
 
@@ -62,6 +94,7 @@
           onUploadProgress: (progressEvent: AxiosProgressEvent) => {
             if (progressEvent && progressEvent.progress) {
               const progress = Math.round(progressEvent.progress * 100);
+
               if (!folder) {
                 uploadStore.setStatusForFiles(file.name, progress);
               } else {
@@ -72,19 +105,25 @@
             }
           },
         };
-        return axios.post(url, formData, config);
-      } catch (error) {
-        console.log(error);
+        axios.post(url, formData, config);
+      } catch (error: any) {
+        console.log(error.response.data || error.message);
       }
     });
 
     await Promise.all(filePromises);
-
     invalidateAll();
   }
 </script>
 
-<Dialog handleSave={createNewFolder} />
+<Dialog
+  handleDialogToggle={() => {
+    open = !open;
+  }}
+  bind:open
+  bind:value={newFolder}
+  handleSave={createNewFolder}
+/>
 <Button
   variant="outline"
   on:click={() => {
