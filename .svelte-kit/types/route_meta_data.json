@@ -1,17 +1,13 @@
 {
-	"/(_dashboard)": [
-		"src/routes/(_dashboard)/+page.server.ts",
-		"src/routes/(_dashboard)/+layout.server.ts",
-		"src/routes/(_dashboard)/+layout.server.ts"
+	"/(_main)": [
+		"src/routes/(_main)/+page.server.ts",
+		"src/routes/(_main)/+layout.server.ts",
+		"src/routes/(_main)/+layout.server.ts"
 	],
 	"/": [],
-	"/(_dashboard)/feeds": [
-		"src/routes/(_dashboard)/feeds/+page.server.ts",
-		"src/routes/(_dashboard)/+layout.server.ts"
-	],
-	"/(_dashboard)/fileuploads": [
-		"src/routes/(_dashboard)/fileuploads/+page.server.ts",
-		"src/routes/(_dashboard)/+layout.server.ts"
+	"/(_main)/analyses": [
+		"src/routes/(_main)/analyses/+page.server.ts",
+		"src/routes/(_main)/+layout.server.ts"
 	],
 	"/(auth)/login": [
 		"src/routes/(auth)/login/+page.server.ts"
@@ -19,12 +15,12 @@
 	"/(auth)/register": [
 		"src/routes/(auth)/register/+page.server.ts"
 	],
-	"/(_dashboard)/uploads": [
-		"src/routes/(_dashboard)/uploads/+page.server.ts",
-		"src/routes/(_dashboard)/+layout.server.ts"
+	"/(_main)/uploads": [
+		"src/routes/(_main)/uploads/+page.server.ts",
+		"src/routes/(_main)/+layout.server.ts"
 	],
-	"/(_dashboard)/uploads/[...slug]": [
-		"src/routes/(_dashboard)/uploads/[...slug]/+page.server.ts",
-		"src/routes/(_dashboard)/+layout.server.ts"
+	"/(_main)/uploads/[...slug]": [
+		"src/routes/(_main)/uploads/[...slug]/+page.server.ts",
+		"src/routes/(_main)/+layout.server.ts"
 	]
 }

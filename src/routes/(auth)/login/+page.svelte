@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import Button from "$components/ui/button/Button.svelte";
   import InputGroup from "$lib/components/Form/InputGroup.svelte";
 
@@ -23,7 +24,6 @@
     resetForm: true,
     multipleSubmits: "prevent",
     onError({ result }) {
-      console.log("result", result);
       badRequest.payload = result.error;
       badRequest = badRequest;
     },
@@ -65,7 +65,7 @@
         bind:value={$_form.username}
         label="User Name"
         type="text"
-        name='username'
+        name="username"
       />
 
       <div>
@@ -75,7 +75,7 @@
           bind:value={$_form.password}
           label="Password"
           type="password"
-          name='password'
+          name="password"
         />
       </div>
 
@@ -84,13 +84,24 @@
       {/if}
 
       <div>
-        <Button type="submit" class="w-full">Sign in</Button>
+        <button
+          type="submit"
+          class="
+          flex w-full justify-center rounded-md bg-white px-3 py-1.5 text-sm font-semibold leading-6 text-gray-900 shadow-sm hover:bg-gray-200 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600
+      
+        ">Sign in</button
+        >
       </div>
     </form>
 
     <p class="mt-10 text-center text-sm text-gray-400">
       Not a member?
-      <Button href="/register" variant="link">Register here</Button>
+      <Button
+        on:click={() => {
+          goto("/register");
+        }}
+        variant="link">Register here</Button
+      >
     </p>
   </div>
 </div>

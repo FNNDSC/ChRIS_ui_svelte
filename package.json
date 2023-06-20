@@ -1,5 +1,5 @@
 {
-	"name": "shadcn-test",
+	"name": "chris_ui_svelte",
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
@@ -39,6 +39,7 @@
 		"class-variance-authority": "^0.6.0",
 		"clsx": "^1.2.1",
 		"lucide-svelte": "^0.233.0",
+		"radix-svelte": "^0.7.1",
 		"svelte-headlessui": "^0.0.15",
 		"svelte-transition": "^0.0.7",
 		"sveltekit-superforms": "^1.0.0-rc.1",

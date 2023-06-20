@@ -1,11 +1,19 @@
 <script lang="ts">
   import { uploadStore } from "$lib/stores/uploadStore";
   import { Transition } from "svelte-transition";
+  import ButtonIcon from "./ButtonIcon.svelte";
+  import { Button } from "$lib/components/ui/button";
+  import RadialProgress from "./RadialProgress.svelte";
+  import { Check } from "lucide-svelte";
+  import DisplayDetails from "./DisplayDetails.svelte";
+
+  $: ({ fileStatus, folderStatus } = $uploadStore);
 </script>
 
 <div
   aria-live="assertive"
-  class="pointer-events-none fixed bottom-0 inset-x-0 flex items-end px-4 py-6 sm:items-start sm:p-6"
+  class="pointer-events-none
+  fixed bottom-0 inset-x-0 flex items-end px-4 py-6 sm:items-start sm:p-6"
 >
   <div class="flex w-full flex-col items-center space-y-4 sm:items-end">
     <Transition
@@ -18,55 +26,76 @@
       leaveTo="opacity-0"
     >
       <div
-        class="pointer-events-auto w-full max-w-sm overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black ring-opacity-5"
+        class="
+            pointer-events-auto
+            bg-gray-900
+            w-full max-w-lg overflow-hidden rounded-lg shadow-lg ring-1 ring-white"
       >
-        <div class="p-4">
-          <div class="flex items-start">
-            <div class="ml-3 w-0 flex-1 pt-0.5">
-              {#each [...$uploadStore.uploadStatus] as [key, value]}
-                <p class="mt-1 text-sm text-gray-500">
-                  {key} - {value}
-                </p>
-              {/each}
-
-              <div class="mt-3 flex space-x-7">
-                <button
-                  type="button"
-                  class="rounded-md bg-white text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                  >Undo</button
-                >
-                <button
-                  on:click={() => {
-                    uploadStore.showNotifiction();
-                  }}
-                  type="button"
-                  class="rounded-md bg-white text-sm font-medium text-gray-700 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                  >Dismiss</button
-                >
-              </div>
-            </div>
-            <div class="ml-4 flex flex-shrink-0">
-              <button
-                on:click={() => {
-                  uploadStore.reset();
-                }}
-                type="button"
-                class="inline-flex rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-              >
-                <span class="sr-only">Close</span>
-                <svg
-                  class="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z"
-                  />
-                </svg>
-              </button>
-            </div>
+        <div class="h-96 overflow-auto p-4">
+          <div class="mr-2 flex flex-shrink-0">
+            <p class="w-0 flex-1 font-medium truncate text-white">
+              Your Notifications
+            </p>
+            <Button
+              variant="link"
+              class="text-sm font-medium mr-4 p-0 items-start">Clear All</Button
+            >
+            <ButtonIcon
+              on:click={() => uploadStore.toggleNotification()}
+              text="Close"
+              iconType="close"
+            />
           </div>
+
+          {#if Object.keys(folderStatus).length > 0}
+            {#each Object.entries(folderStatus) as [name, status]}
+              <DisplayDetails>
+                <ButtonIcon slot="icon" text="Close" iconType="folder" />
+                <p
+                  slot="key"
+                  class="w-0 flex-1 text-sm font-medium truncate text-white"
+                >
+                  {name}
+                </p>
+
+                <svelte:fragment slot="progress">
+                  {#if status.done === status.total}
+                    <Check class="h-5 w-5 text-green-400" />
+                  {:else}
+                    <p class="text-sm font-medium truncate text-gray-400">
+                      {status.done}/{status.total}
+                    </p>
+                  {/if}
+                </svelte:fragment>
+
+                <ButtonIcon slot="close" text="" iconType="close" />
+              </DisplayDetails>
+            {/each}
+          {/if}
+
+          {#if Object.keys(fileStatus).length > 0}
+            {#each Object.entries(fileStatus) as [name, status] (name)}
+              <DisplayDetails>
+                <ButtonIcon slot="icon" text="Close" iconType="file" />
+                <p
+                  slot="key"
+                  class="w-0 flex-1 text-sm font-medium truncate text-white"
+                >
+                  {name}
+                </p>
+
+                <svelte:fragment slot="progress">
+                  {#if status.progress === 100}
+                    <Check class="h-5 w-5 text-green-400" />
+                  {:else}
+                    <RadialProgress value={status.progress} />
+                  {/if}
+                </svelte:fragment>
+
+                <ButtonIcon slot="close" text="" iconType="close" />
+              </DisplayDetails>
+            {/each}
+          {/if}
         </div>
       </div>
     </Transition>
