@@ -28,6 +28,7 @@
   on:keyup
   on:mouseenter
   on:mouseleave
+  on:dblclick|preventDefault
 >
   <slot />
 </svelte:element>

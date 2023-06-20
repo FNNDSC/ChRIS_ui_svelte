@@ -2,9 +2,12 @@
   import { uploadStore } from "$lib/stores/uploadStore";
   import { Transition } from "svelte-transition";
   import ButtonIcon from "./ButtonIcon.svelte";
+  import { Button } from "$lib/components/ui/button";
   import RadialProgress from "./RadialProgress.svelte";
   import { Check } from "lucide-svelte";
   import DisplayDetails from "./DisplayDetails.svelte";
+
+  $: ({ fileStatus, folderStatus } = $uploadStore);
 </script>
 
 <div
@@ -33,7 +36,10 @@
             <p class="w-0 flex-1 font-medium truncate text-white">
               Your Notifications
             </p>
-
+            <Button
+              variant="link"
+              class="text-sm font-medium mr-4 p-0 items-start">Clear All</Button
+            >
             <ButtonIcon
               on:click={() => uploadStore.toggleNotification()}
               text="Close"
@@ -41,48 +47,48 @@
             />
           </div>
 
-          {#if $uploadStore.folderStatus.name}
-            <DisplayDetails>
-              <ButtonIcon slot="icon" text="Close" iconType="folder" />
-              <p
-                slot="key"
-                class="w-0 flex-1 text-sm font-medium truncate text-white"
-              >
-                {$uploadStore.folderStatus.name}
-              </p>
-
-              <svelte:fragment slot="progress">
-                {#if $uploadStore.folderStatus.done === $uploadStore.folderStatus.total}
-                  <Check class="h-5 w-5 text-green-400" />
-                {:else}
-                  <p class="text-sm font-medium truncate text-gray-400">
-                    {$uploadStore.folderStatus.done}/{$uploadStore.folderStatus
-                      .total}
-                  </p>
-                {/if}
-              </svelte:fragment>
-
-              <ButtonIcon slot="close" text="" iconType="close" />
-            </DisplayDetails>
-          {/if}
-
-          {#if $uploadStore.fileStatus.size > 0}
-            {#each [...$uploadStore.fileStatus] as [key, value] (key)}
+          {#if Object.keys(folderStatus).length > 0}
+            {#each Object.entries(folderStatus) as [name, status]}
               <DisplayDetails>
-                <ButtonIcon slot="icon" text="Close" iconType="file" />
-
+                <ButtonIcon slot="icon" text="Close" iconType="folder" />
                 <p
                   slot="key"
                   class="w-0 flex-1 text-sm font-medium truncate text-white"
                 >
-                  {key}
+                  {name}
                 </p>
 
                 <svelte:fragment slot="progress">
-                  {#if value === 100}
+                  {#if status.done === status.total}
                     <Check class="h-5 w-5 text-green-400" />
                   {:else}
-                    <RadialProgress {value} />
+                    <p class="text-sm font-medium truncate text-gray-400">
+                      {status.done}/{status.total}
+                    </p>
+                  {/if}
+                </svelte:fragment>
+
+                <ButtonIcon slot="close" text="" iconType="close" />
+              </DisplayDetails>
+            {/each}
+          {/if}
+
+          {#if Object.keys(fileStatus).length > 0}
+            {#each Object.entries(fileStatus) as [name, status] (name)}
+              <DisplayDetails>
+                <ButtonIcon slot="icon" text="Close" iconType="file" />
+                <p
+                  slot="key"
+                  class="w-0 flex-1 text-sm font-medium truncate text-white"
+                >
+                  {name}
+                </p>
+
+                <svelte:fragment slot="progress">
+                  {#if status.progress === 100}
+                    <Check class="h-5 w-5 text-green-400" />
+                  {:else}
+                    <RadialProgress value={status.progress} />
                   {/if}
                 </svelte:fragment>
 

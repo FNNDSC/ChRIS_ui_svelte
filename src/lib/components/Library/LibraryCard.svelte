@@ -1,20 +1,59 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import { Card } from "$components/ui/card";
+  import { Button } from "$components/ui/button";
   import { createMenu } from "svelte-headlessui";
   import Transition from "svelte-transition";
   import Ellipse from "./Ellipse.svelte";
 
   export let path: string;
+  export let type: string;
+  export let handleMultipleSelect: (path: string, multiple: boolean) => void;
+  export let multipleSelected: string[];
 
   const menu = createMenu({
     label: "Actions",
   });
+
+  let clickCount = 0;
+  let singleClickTimer: any;
+
+  function handleClicks(e: MouseEvent) {
+    e.preventDefault();
+    clickCount++;
+
+    if (clickCount === 1) {
+      singleClickTimer = setTimeout(function () {
+        clickCount = 0;
+
+        if (e.ctrlKey) {
+          handleMultipleSelect(path, true);
+        } else {
+          handleMultipleSelect(path, false);
+        }
+      }, 400);
+    } else if (clickCount === 2) {
+      clearTimeout(singleClickTimer);
+      clickCount = 0;
+      if (type === "folder") {
+        goto(path);
+      }
+    }
+  }
 </script>
 
-<Card class="relative flex items-center px-6 py-5  hover:border-gray-200">
+<Card
+  class="relative flex items-center px-6 py-5 hover:border-gray-200 
+{multipleSelected.includes(path) && 'border-gray-200'}
+"
+>
   <slot name="icon" />
   <div class="min-w-0 flex-1">
-    <a href={path} class="focus:outline-none">
+    <a
+      href={type === "folder" ? path : ""}
+      on:click={handleClicks}
+      class="focus:outline-none"
+    >
       <span class="absolute inset-0" aria-hidden="true" />
       <span class="flex items-center">
         <slot name="name" />
@@ -24,7 +63,6 @@
   <div class="relative ml-auto">
     <button
       use:menu.button
-      on:click|stopPropagation={() => console.log("clicked")}
       type="button"
       class="-m-2.5 block p-2.5 text-gray-400 hover:text-gray-500"
       id="options-menu-0-button"
@@ -54,7 +92,7 @@
       >
         <div use:menu.item>
           <button
-            on:click|stopPropagation={() => {
+            on:click|stopPropagation={(e) => {
               menu.close();
             }}
             use:menu.item

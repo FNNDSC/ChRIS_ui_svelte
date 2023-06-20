@@ -1,14 +1,27 @@
 import { writable } from "svelte/store";
 
-function getInitialStatus() {
+interface UploadStatus {
+  isOpen: boolean;
+  fileStatus: {
+    [key: string]: {
+      progress: number;
+      controller: AbortController;
+    };
+  };
+  folderStatus: {
+    [key: string]: {
+      done: number;
+      total: number;
+      controller: AbortController;
+    };
+  };
+}
+
+function getInitialStatus(): UploadStatus {
   return {
     isOpen: false,
-    fileStatus: new Map(),
-    folderStatus: {
-      total: 0,
-      done: 0,
-      name: "",
-    },
+    fileStatus: {},
+    folderStatus: {},
   };
 }
 
@@ -17,38 +30,43 @@ function setStatusForUploads() {
 
   return {
     subscribe,
-    setStatusForFiles: (fileName: string, progress: number) =>
+    setStatusForFiles: (
+      fileName: string,
+      progress: number,
+      controller: AbortController
+    ) => {
       update((status) => {
         return {
           ...status,
-          fileStatus: status.fileStatus.set(fileName, progress),
-        };
-      }),
-
-    setFolderDetails: (total: number, name: string) =>
-      update((status) => {
-        return {
-          ...status,
-          folderStatus: {
-            ...status.folderStatus,
-            name,
-            total,
-          },
-        };
-      }),
-
-    setStatusForFolders: (done: number) => {
-      update((status) => {
-        return {
-          ...status,
-          folderStatus: {
-            ...status.folderStatus,
-            done,
+          fileStatus: {
+            ...status.fileStatus,
+            [fileName]: {
+              progress,
+              controller,
+            },
           },
         };
       });
     },
-
+    setStatusForFolders: (
+      name: string,
+      done: number,
+      total: number,
+      controller: AbortController
+    ) => {
+      update((status) => {
+        return {
+          ...status,
+          folderStatus: {
+            [name]: {
+              done,
+              total,
+              controller,
+            },
+          },
+        };
+      });
+    },
     newNotification: () => {
       update((status) => {
         return {
@@ -65,6 +83,8 @@ function setStatusForUploads() {
         };
       });
     },
+
+    clearNotifications: () => {},
     reset: () => set(getInitialStatus()),
   };
 }
