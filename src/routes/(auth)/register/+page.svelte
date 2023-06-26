@@ -1,10 +1,9 @@
 <script lang="ts">
+  import { goto } from "$app/navigation";
   import InputGroup from "$lib/components/Form/InputGroup.svelte";
   import { Button } from "$components/ui/button";
   import type { PageData } from "./$types";
-
   import { superForm } from "sveltekit-superforms/client";
-  import { goto } from "$app/navigation";
 
   export let data: PageData;
 

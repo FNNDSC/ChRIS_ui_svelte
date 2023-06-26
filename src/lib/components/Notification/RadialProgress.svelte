@@ -2,7 +2,7 @@
   const radius = 6;
   let circumference: number = radius;
   let dashoffset: number;
-  // Set Progress Amount
+
   function setProgress(percent: number) {
     circumference = radius * 2 * Math.PI;
     dashoffset = circumference - (percent / 100) * circumference;

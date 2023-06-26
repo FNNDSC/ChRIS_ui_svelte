@@ -1,15 +1,21 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import { Card } from "$components/ui/card";
-  import { Button } from "$components/ui/button";
   import { createMenu } from "svelte-headlessui";
   import Transition from "svelte-transition";
   import Ellipse from "./Ellipse.svelte";
 
   export let path: string;
   export let type: string;
-  export let handleMultipleSelect: (path: string, multiple: boolean) => void;
-  export let multipleSelected: string[];
+  export let multipleSelected: { path: string; type: string }[];
+  export let handleMultipleSelect: (
+    path: string,
+    multiple: boolean,
+    type: string
+  ) => void;
+  export let handleDownload: () => void;
+
+  $: selected = multipleSelected.find((selected) => selected.path === path);
 
   const menu = createMenu({
     label: "Actions",
@@ -27,9 +33,9 @@
         clickCount = 0;
 
         if (e.ctrlKey) {
-          handleMultipleSelect(path, true);
+          handleMultipleSelect(path, true, type);
         } else {
-          handleMultipleSelect(path, false);
+          handleMultipleSelect(path, false, type);
         }
       }, 400);
     } else if (clickCount === 2) {
@@ -44,7 +50,7 @@
 
 <Card
   class="relative flex items-center px-6 py-5 hover:border-gray-200 
-{multipleSelected.includes(path) && 'border-gray-200'}
+  {selected && 'border-gray-200'}
 "
 >
   <slot name="icon" />
@@ -93,6 +99,8 @@
         <div use:menu.item>
           <button
             on:click|stopPropagation={(e) => {
+              handleDownload();
+
               menu.close();
             }}
             use:menu.item

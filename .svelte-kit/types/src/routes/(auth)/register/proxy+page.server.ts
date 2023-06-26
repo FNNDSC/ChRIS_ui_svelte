@@ -1,10 +1,10 @@
 // @ts-nocheck
-import type { PageServerLoad, Action, Actions } from "./$types";
 import { fail, error, redirect } from "@sveltejs/kit";
 import Client from "@fnndsc/chrisapi";
 import { z } from "zod";
 import { superValidate } from "sveltekit-superforms/server";
-import { PUBLIC_USERS_URL} from "$env/static/public";
+import { PUBLIC_USERS_URL } from "$env/static/public";
+import type { PageServerLoad, Action, Actions } from "./$types";
 
 const schema = z.object({
   username: z.string(),
