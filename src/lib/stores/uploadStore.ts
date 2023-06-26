@@ -73,7 +73,7 @@ function setStatusForUploads() {
         };
       });
     },
-    newNotification: () => {
+    setNewNotification: () => {
       update((status) => {
         return {
           ...status,
@@ -81,17 +81,15 @@ function setStatusForUploads() {
         };
       });
     },
-    toggleNotification: () => {
+
+    closeNotification: () => {
       update((status) => {
         return {
           ...status,
-          isOpen: !status.isOpen,
+          isOpen: false,
         };
       });
     },
-
-    clearNotifications: () => {},
-    reset: () => set(getInitialStatus()),
   };
 }
 

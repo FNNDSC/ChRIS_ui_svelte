@@ -66,7 +66,7 @@ function setStatusForDownloads() {
             [name]: {
               progress,
               cancelled,
-              currentStep
+              currentStep,
             },
           },
         };
@@ -109,7 +109,47 @@ function setStatusForDownloads() {
         };
       });
     },
+
+    closeNotification: () => {
+      update((status) => {
+        deleteCompletedFileNotifications(status.fileDownload);
+        deleteCompletedFolderNotifications(status.folderDownload);
+
+        return {
+          ...status,
+          isOpen: false,
+        };
+      });
+    },
   };
+}
+
+function deleteCompletedFileNotifications(fileDownload: FileDownload) {
+  for (const step in fileDownload) {
+    const currentStep = fileDownload[step].currentStep;
+
+    if (
+      currentStep === "Download Complete" ||
+      currentStep === "Download Cancelled"
+    ) {
+      delete fileDownload[step];
+    } else fileDownload[step];
+  }
+
+  return fileDownload;
+}
+
+function deleteCompletedFolderNotifications(folderDownload: FolderDownload) {
+  for (const step in folderDownload) {
+    const currentStep = folderDownload[step].currentStep;
+
+    if (
+      currentStep === "Download Complete" ||
+      currentStep === "Download Cancelled"
+    ) {
+      delete folderDownload[step];
+    } else folderDownload[step];
+  }
 }
 
 export const downloadStore = setStatusForDownloads();

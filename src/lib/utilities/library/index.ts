@@ -249,7 +249,7 @@ export async function handleUpload(
   const client = await clientSetup(token);
   const url = client.uploadedFilesUrl;
 
-  uploadStore.newNotification();
+  uploadStore.setNewNotification();
 
   let count = 0;
   items.map(async (file) => {

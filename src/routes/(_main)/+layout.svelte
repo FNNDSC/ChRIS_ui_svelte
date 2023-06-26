@@ -3,7 +3,7 @@
   import { Transition } from "svelte-transition";
   import { uploadStore } from "$lib/stores/uploadStore";
   import { downloadStore } from "$lib/stores/downloadStore";
-  import Notifcation from "$lib/components/Notification/Notifcation.svelte";
+  import Notification from "$components/Notification/Notification.svelte";
 
   export let data;
 
@@ -392,7 +392,10 @@
         <div class="flex flex-1" />
         <div class="flex items-center gap-x-4 lg:gap-x-6">
           <button
-            on:click={() => uploadStore.toggleNotification()}
+            on:click={() => {
+              uploadStore.setNewNotification();
+              downloadStore.setNewNotification();
+            }}
             type="button"
             class="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500"
           >
@@ -502,7 +505,7 @@
     <main>
       <slot />
       {#if $uploadStore.isOpen || $downloadStore.isOpen}
-        <Notifcation />
+        <Notification />
       {/if}
     </main>
   </div>

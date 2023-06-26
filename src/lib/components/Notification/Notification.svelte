@@ -41,7 +41,10 @@
             </p>
 
             <ButtonIcon
-              on:click={() => uploadStore.toggleNotification()}
+              on:close={() => {
+                uploadStore.closeNotification();
+                downloadStore.closeNotification();
+              }}
               text="Close"
               iconType="close"
             />
