@@ -2,14 +2,16 @@ import { writable } from "svelte/store";
 
 interface UploadStatus {
   isOpen: boolean;
-  fileStatus: {
+  fileUpload: {
     [key: string]: {
+      currentStep: string;
       progress: number;
       controller: AbortController;
     };
   };
-  folderStatus: {
+  folderUpload: {
     [key: string]: {
+      currentStep: string;
       done: number;
       total: number;
       controller: AbortController;
@@ -20,8 +22,8 @@ interface UploadStatus {
 function getInitialStatus(): UploadStatus {
   return {
     isOpen: false,
-    fileStatus: {},
-    folderStatus: {},
+    fileUpload: {},
+    folderUpload: {},
   };
 }
 
@@ -31,6 +33,7 @@ function setStatusForUploads() {
   return {
     subscribe,
     setStatusForFiles: (
+      currentStep: string,
       fileName: string,
       progress: number,
       controller: AbortController
@@ -38,9 +41,10 @@ function setStatusForUploads() {
       update((status) => {
         return {
           ...status,
-          fileStatus: {
-            ...status.fileStatus,
+          fileUpload: {
+            ...status.fileUpload,
             [fileName]: {
+              currentStep,
               progress,
               controller,
             },
@@ -49,6 +53,7 @@ function setStatusForUploads() {
       });
     },
     setStatusForFolders: (
+      currentStep: string,
       name: string,
       done: number,
       total: number,
@@ -57,8 +62,9 @@ function setStatusForUploads() {
       update((status) => {
         return {
           ...status,
-          folderStatus: {
+          folderUpload: {
             [name]: {
+              currentStep,
               done,
               total,
               controller,

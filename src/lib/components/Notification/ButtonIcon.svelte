@@ -1,12 +1,18 @@
 <script lang="ts">
   import { FileIcon, FolderIcon } from "lucide-svelte";
+  import { createEventDispatcher } from "svelte";
 
   export let text: string;
   export let iconType: string;
+  const dispatch = createEventDispatcher();
+
+  function onClick() {
+    dispatch("close");
+  }
 </script>
 
 <button
-  on:click
+  on:click={onClick}
   type="button"
   class="inline-flex rounded-md text-gray-500 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 >

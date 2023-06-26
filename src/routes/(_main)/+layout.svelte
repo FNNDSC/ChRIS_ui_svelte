@@ -1,8 +1,9 @@
 <script lang="ts">
-  import { uploadStore } from "$lib/stores/uploadStore";
-  import Notifcation from "$lib/components/Notification/Notifcation.svelte";
   import { createDialog, createMenu } from "svelte-headlessui";
   import { Transition } from "svelte-transition";
+  import { uploadStore } from "$lib/stores/uploadStore";
+  import { downloadStore } from "$lib/stores/downloadStore";
+  import Notifcation from "$lib/components/Notification/Notifcation.svelte";
 
   export let data;
 
@@ -398,7 +399,7 @@
             <span
               class="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-xs font-medium text-white ring-1 ring-inset ring-gray-800"
             >
-              {#if $uploadStore.fileStatus.size > 0}
+              {#if Object.keys($uploadStore.fileUpload).length > 0}
                 <svg
                   class="h-1.5 w-1.5 fill-purple-400"
                   viewBox="0 0 6 6"
@@ -500,7 +501,7 @@
 
     <main>
       <slot />
-      {#if $uploadStore.isOpen}
+      {#if $uploadStore.isOpen || $downloadStore.isOpen}
         <Notifcation />
       {/if}
     </main>

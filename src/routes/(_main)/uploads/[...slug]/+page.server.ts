@@ -1,8 +1,13 @@
 import { redirect, error } from "@sveltejs/kit";
-import type { PageServerLoad } from "./$types";
 import { fetchClient } from "$lib/client";
+import type { PageServerLoad } from "./$types";
 
-export const load: PageServerLoad = async ({ locals, cookies, params }) => {
+export const load: PageServerLoad = async ({
+  locals,
+  cookies,
+  params,
+  depends,
+}) => {
   if (!locals.user) {
     throw redirect(302, "/login");
   }
@@ -24,10 +29,13 @@ export const load: PageServerLoad = async ({ locals, cookies, params }) => {
 
   const client = fetchClient(session);
 
+  depends("app:reload");
+  
   const uploads = await client.getFileBrowserPaths({
     path: params.slug,
   });
   const pathList = await client.getFileBrowserPath(params.slug);
+
   const fileList = await pathList.getFiles({
     limit: 1000,
     offset: 0,

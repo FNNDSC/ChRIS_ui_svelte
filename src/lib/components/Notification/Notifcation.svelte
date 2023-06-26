@@ -1,13 +1,16 @@
 <script lang="ts">
-  import { uploadStore } from "$lib/stores/uploadStore";
   import { Transition } from "svelte-transition";
+  import Container from "./Container.svelte";
   import ButtonIcon from "./ButtonIcon.svelte";
-  import { Button } from "$lib/components/ui/button";
+  import { uploadStore } from "$lib/stores/uploadStore";
+  import { downloadStore } from "$lib/stores/downloadStore";
   import RadialProgress from "./RadialProgress.svelte";
-  import { Check } from "lucide-svelte";
-  import DisplayDetails from "./DisplayDetails.svelte";
 
-  $: ({ fileStatus, folderStatus } = $uploadStore);
+  $: ({ fileUpload, folderUpload } = $uploadStore);
+  $: ({ folderDownload, fileDownload } = $downloadStore);
+
+  $: console.log($downloadStore);
+  $: console.log($uploadStore);
 </script>
 
 <div
@@ -32,14 +35,11 @@
             w-full max-w-lg overflow-hidden rounded-lg shadow-lg ring-1 ring-white"
       >
         <div class="h-96 overflow-auto p-4">
-          <div class="mr-2 flex flex-shrink-0">
+          <div class="flex flex-shrink-0">
             <p class="w-0 flex-1 font-medium truncate text-white">
               Your Notifications
             </p>
-            <Button
-              variant="link"
-              class="text-sm font-medium mr-4 p-0 items-start">Clear All</Button
-            >
+
             <ButtonIcon
               on:click={() => uploadStore.toggleNotification()}
               text="Close"
@@ -47,53 +47,110 @@
             />
           </div>
 
-          {#if Object.keys(folderStatus).length > 0}
-            {#each Object.entries(folderStatus) as [name, status]}
-              <DisplayDetails>
-                <ButtonIcon slot="icon" text="Close" iconType="folder" />
+          {#if Object.keys(folderUpload).length > 0}
+            {#each Object.entries(folderUpload) as [name, status]}
+              <Container
+                iconType="folder"
+                fileName={name}
+                currentStep={status.currentStep}
+                done={status.done === status.total}
+                handleCancel={() => {
+                  uploadStore.setStatusForFolders(
+                    "Upload Cancelled",
+                    name,
+                    status.done,
+                    status.total,
+                    status.controller
+                  );
+                  status.controller.abort();
+                }}
+              >
                 <p
-                  slot="key"
-                  class="w-0 flex-1 text-sm font-medium truncate text-white"
+                  slot="progress"
+                  class="text-sm font-medium truncate text-gray-400"
                 >
-                  {name}
+                  {status.done}/${status.total}
                 </p>
-
-                <svelte:fragment slot="progress">
-                  {#if status.done === status.total}
-                    <Check class="h-5 w-5 text-green-400" />
-                  {:else}
-                    <p class="text-sm font-medium truncate text-gray-400">
-                      {status.done}/{status.total}
-                    </p>
-                  {/if}
-                </svelte:fragment>
-
-                <ButtonIcon slot="close" text="" iconType="close" />
-              </DisplayDetails>
+              </Container>
             {/each}
           {/if}
 
-          {#if Object.keys(fileStatus).length > 0}
-            {#each Object.entries(fileStatus) as [name, status] (name)}
-              <DisplayDetails>
-                <ButtonIcon slot="icon" text="Close" iconType="file" />
+          {#if Object.keys(fileUpload).length > 0}
+            {#each Object.entries(fileUpload) as [name, status] (name)}
+              <Container
+                iconType="file"
+                fileName={name}
+                currentStep={status.currentStep}
+                done={status.progress === 100}
+                handleCancel={() => {
+                  uploadStore.setStatusForFiles(
+                    "Upload Cancelled",
+                    name,
+                    status.progress,
+                    status.controller
+                  );
+                  status.controller.abort();
+                }}
+              >
                 <p
-                  slot="key"
-                  class="w-0 flex-1 text-sm font-medium truncate text-white"
+                  slot="progress"
+                  class="text-sm font-medium truncate text-gray-400"
                 >
-                  {name}
+                  <RadialProgress value={status.progress} />
                 </p>
+              </Container>
+            {/each}
+          {/if}
 
-                <svelte:fragment slot="progress">
-                  {#if status.progress === 100}
-                    <Check class="h-5 w-5 text-green-400" />
-                  {:else}
+          {#if Object.keys(folderDownload).length > 0}
+            {#each Object.entries(folderDownload) as [name, status] (name)}
+              <Container
+                iconType="folder"
+                fileName={name}
+                currentStep={status.currentStep}
+                done={status.progress === 100}
+                handleCancel={() => {
+                  $downloadStore.folderDownload[name].cancelled();
+                }}
+              >
+                <p
+                  slot="progress"
+                  class="text-sm font-medium truncate text-gray-400"
+                >
+                  {#if status.progress}
                     <RadialProgress value={status.progress} />
                   {/if}
-                </svelte:fragment>
+                </p>
+              </Container>
+            {/each}
+          {/if}
 
-                <ButtonIcon slot="close" text="" iconType="close" />
-              </DisplayDetails>
+          {#if Object.keys(fileDownload).length > 0}
+            {#each Object.entries(fileDownload) as [name, status] (name)}
+              <Container
+                iconType="file"
+                fileName={name}
+                currentStep={status.currentStep}
+                done={status.progress === 100}
+                handleCancel={() => {
+                  downloadStore.setLargeFileDownload(
+                    name,
+                    status.progress,
+                    "Download Cancelled",
+                    status.cancelled
+                  );
+                  status.cancelled.abort();
+                }}
+              >
+                <p
+                  slot="progress"
+                  class="text-sm font-medium truncate text-gray-400"
+                >
+                  {#if status.progress}
+                    <RadialProgress value={status.progress} />
+                  {/if}
+                </p>
+              </Container>
             {/each}
           {/if}
         </div>

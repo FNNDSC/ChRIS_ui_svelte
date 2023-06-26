@@ -1,32 +1,43 @@
 <script lang="ts">
-  import axios from "axios";
-  import { invalidateAll } from "$app/navigation";
+  import { Folder, File, X, Download } from "lucide-svelte";
   import { page } from "$app/stores";
   import { LibraryCard, Dialog } from "$components/Library/";
   import { Button } from "$components/ui/button";
-  import type { AxiosProgressEvent } from "axios";
-  import type { FeedFile } from "@fnndsc/chrisapi";
+  import {
+    handleUpload,
+    handleFileDownload,
+    handleFolderDownload,
+    createNewFolder,
+    getFileName,
+  } from "$lib/utilities/library";
   import type { PageData } from "./$types";
-  import { Folder, File, X, Download } from "lucide-svelte";
-  import { fetchClient } from "$lib/client";
-  import { uploadStore } from "$lib/stores/uploadStore";
 
   export let data: PageData;
   let open = false;
   let fileInput: any;
   let folderInput: any;
   let newFolder: string;
+  let multipleSelected: {
+    path: string;
+    type: string;
+  }[] = [];
   $: pathname = $page.url.pathname;
   $: currentPath = pathname.substring(9);
-  let multipleSelected: string[] = [];
+  $: ({ folders, files } = data);
 
-  function handleMultipleSelect(path: string, multiple: boolean) {
-    if (multipleSelected.includes(path)) {
+  function handleMultipleSelect(path: string, multiple: boolean, type: string) {
+    const findIndex = multipleSelected.find(
+      (selected) => selected.path === path
+    );
+
+    if (findIndex) {
       multipleSelected = multiple
-        ? multipleSelected.filter((existingPath) => existingPath !== path)
+        ? multipleSelected.filter((existingPath) => existingPath.path !== path)
         : [];
     } else {
-      multipleSelected = multiple ? [...multipleSelected, path] : [path];
+      multipleSelected = multiple
+        ? [...multipleSelected, { path, type }]
+        : [{ path, type }];
     }
   }
 
@@ -34,99 +45,44 @@
     multipleSelected = [];
   }
 
-  async function handleSubmit(files: FileList, isFolder: boolean) {
-    const items = Array.from(files);
-    const { client, token } = await clientSetup();
-    const url = client.uploadedFilesUrl;
-
-    uploadStore.newNotification();
-
-    items.map(async (file, index) => {
-      const formData = new FormData();
-      const name = isFolder ? file.webkitRelativePath : file.name;
-      formData.append("upload_path", `${currentPath}/${name}`);
-      formData.append("fname", file, file.name);
-      const controller = new AbortController();
-
-      try {
-        const config = {
-          headers: { Authorization: "Token " + token },
-          signal: controller.signal,
-          onUploadProgress: (progressEvent: AxiosProgressEvent) => {
-            if (progressEvent && progressEvent.progress) {
-              const progress = Math.round(progressEvent.progress * 100);
-
-              if (!isFolder) {
-                uploadStore.setStatusForFiles(file.name, progress, controller);
-              } else {
-                if (progress === 100) {
-                  const fileName = files[0].webkitRelativePath.split("/")[0];
-                  uploadStore.setStatusForFolders(
-                    fileName,
-                    index + 1,
-                    files.length,
-                    controller
-                  );
-                }
-              }
-            }
+  function handleMultipleDownload() {
+    multipleSelected.map((selected) => {
+      if (selected.type === "folder") {
+        handleFolderDownload(
+          {
+            name: getFileName(selected.path),
+            path: selected.path.substring(9),
           },
-        };
-        await axios.post(url, formData, config);
-      } catch (error: any) {
-        console.log(error.response.data || error.message);
+          data.token
+        );
+      }
+
+      if (selected.type === "file") {
+        handleFileDownload(
+          {
+            fname: selected.path.substring(9),
+          },
+          data.token
+        );
       }
     });
-    invalidateAll();
   }
 
   function handleFolderChange(e: any) {
     const folder = e.target.files;
-    handleSubmit(folder, true);
+    handleUpload(folder, true, currentPath, data.token);
   }
 
   function handleFileChange(e: any) {
     const files = e.target.files;
-    handleSubmit(files, false);
+    handleUpload(files, false, currentPath, data.token);
   }
 
-  function getFileName(file: FeedFile["data"]) {
-    const fileNameArray = file.fname.split("/");
-    const fileName = fileNameArray[fileNameArray.length - 1];
-    return fileName;
-  }
-
-  async function clientSetup() {
-    const token = data.token;
-    const client = fetchClient(token);
-    await client.setUrls();
-    return { client, token };
-  }
-
-  async function createNewFolder() {
-    const { client, token } = await clientSetup();
-
+  async function createFolder() {
     if (!newFolder) {
       newFolder = "Untitled";
     }
-
-    const content = "Welcome";
-    const file = new Blob([content], { type: "text/plain" });
-    const path = `${currentPath}/${newFolder}`;
-    const formData = new FormData();
-    formData.append("upload_path", `${path}/Welcome.txt`);
-    formData.append("fname", file, "Welcome.txt");
-
-    try {
-      const config = {
-        headers: { Authorization: "Token " + token },
-      };
-      await axios.post(client.uploadedFilesUrl, formData, config);
-      invalidateAll();
-    } catch (error) {
-      console.log("Error", error);
-    }
-
+    createNewFolder(newFolder, currentPath, data.token);
     open = !open;
     newFolder = "";
   }
@@ -139,7 +95,9 @@
     </Button>
 
     <span class="mr-4">{multipleSelected.length} selected</span>
-    <Download class="h4 w-4 cursor-pointer" />
+    <Button on:click={handleMultipleDownload} variant="outline">
+      <Download class="h4 w-4 cursor-pointer" />
+    </Button>
   {/if}
 </div>
 
@@ -149,7 +107,7 @@
   }}
   bind:open
   bind:value={newFolder}
-  handleSave={createNewFolder}
+  handleSave={createFolder}
 />
 
 <Button
@@ -183,11 +141,14 @@
 />
 
 <div class="grid gap-4 sm:grid-cols-1 lg:grid-cols-5">
-  {#each data.folders as folder (folder.name)}
+  {#each folders as folder (folder.name)}
     <LibraryCard
       type="folder"
       {multipleSelected}
       {handleMultipleSelect}
+      handleDownload={() => {
+        handleFolderDownload(folder, data.token);
+      }}
       path={`${pathname}/${folder.name}`}
     >
       <Folder class="mr-2" slot="icon" />
@@ -197,16 +158,19 @@
     </LibraryCard>
   {/each}
 
-  {#each data.files as file (file.fname)}
+  {#each files as file (file.fname)}
     <LibraryCard
       type="file"
       {multipleSelected}
       {handleMultipleSelect}
-      path={`${pathname}/${getFileName(file)}`}
+      handleDownload={() => {
+        handleFileDownload(file, data.token);
+      }}
+      path={`${pathname}/${getFileName(file.fname)}`}
     >
       <File class="mr-2" slot="icon" />
       <p slot="name" class="text-sm truncate font-medium text-white">
-        {getFileName(file) || ""}
+        {getFileName(file.fname) || ""}
       </p>
     </LibraryCard>
   {/each}
