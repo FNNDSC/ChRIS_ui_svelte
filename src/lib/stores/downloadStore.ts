@@ -135,8 +135,6 @@ function deleteCompletedFileNotifications(fileDownload: FileDownload) {
       delete fileDownload[step];
     } else fileDownload[step];
   }
-
-  return fileDownload;
 }
 
 function deleteCompletedFolderNotifications(folderDownload: FolderDownload) {

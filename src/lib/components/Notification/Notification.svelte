@@ -8,9 +8,6 @@
 
   $: ({ fileUpload, folderUpload } = $uploadStore);
   $: ({ folderDownload, fileDownload } = $downloadStore);
-
-  $: console.log($downloadStore);
-  $: console.log($uploadStore);
 </script>
 
 <div
@@ -72,7 +69,7 @@
                   slot="progress"
                   class="text-sm font-medium truncate text-gray-400"
                 >
-                  {status.done}/${status.total}
+                  {status.done}/{status.total}
                 </p>
               </Container>
             {/each}
@@ -113,7 +110,10 @@
                 currentStep={status.currentStep}
                 done={status.progress === 100}
                 handleCancel={() => {
-                  $downloadStore.folderDownload[name].cancelled();
+                  const folderToCancel = $downloadStore.folderDownload[name];
+                  if (folderToCancel) {
+                    folderToCancel.cancelled();
+                  }
                 }}
               >
                 <p
