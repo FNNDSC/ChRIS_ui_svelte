@@ -3,6 +3,7 @@
   import { page } from "$app/stores";
   import { LibraryCard, Dialog } from "$components/Library/";
   import { Button } from "$components/ui/button";
+  import { Breadcrumb } from "$components/Library/";
   import {
     handleUpload,
     handleFileDownload,
@@ -143,14 +144,14 @@
 />
 
 <Button
-  variant="outline"
+  variant="secondary"
   on:click={() => {
     fileInput.click();
   }}>Upload Files</Button
 >
 
 <Button
-  variant="outline"
+  variant="secondary"
   on:click={() => {
     folderInput.click();
   }}>Upload Folder</Button
@@ -172,6 +173,7 @@
   webkitdirectory
 />
 
+<Breadcrumb currentUrl={pathname} {currentPath} />
 <div class="grid gap-4 sm:grid-cols-1 lg:grid-cols-5">
   {#each folders as folder (folder.name)}
     <LibraryCard

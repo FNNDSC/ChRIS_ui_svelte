@@ -32,7 +32,7 @@ function getInitialStatus(): DownloadState {
 }
 
 function setStatusForDownloads() {
-  const { subscribe, set, update } = writable(getInitialStatus());
+  const { subscribe, update } = writable(getInitialStatus());
 
   return {
     subscribe,
