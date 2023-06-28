@@ -29,14 +29,21 @@ export function getFileName(fname: string) {
   return fileName;
 }
 
-export async function handleFileDownload(file: any, token: string) {
+export async function fetchFile(fname: string, token: string, type: string) {
   const client = await clientSetup(token);
   const fetchedFileList = await client.getUploadedFiles({
-    fname: file.fname,
+    limit: 10000000,
+    fname,
   });
+
   const fetchedFile = fetchedFileList.getItems() as any;
 
-  const fileData = fetchedFile[0];
+  console.log("FetchedFile", fetchedFile);
+  return type === "file" ? fetchedFile[0] : fetchedFile;
+}
+
+export async function handleFileDownload(file: any, token: string) {
+  const fileData = await fetchFile(file, token, "file");
   const fileSize = fileData.data.fsize;
   const fileName = getFileName(fileData.data.fname);
 
@@ -92,9 +99,23 @@ export async function handleFileDownload(file: any, token: string) {
       );
     }
   } else {
-    const blob = await fetchedFile[0].getFileBlob();
+    const blob = await fileData.getFileBlob();
     download(blob, fileName);
   }
+}
+
+export async function handleFileDelete(file: any, token: string) {
+  const fileData = await fetchFile(file.fname, token, "file");
+  fileData.delete();
+  invalidate("app:reload");
+}
+export async function handleFolderDelete(folder: any, token: string) {
+  const name = `${folder.path}/${folder.name}`;
+  const files = await fetchFile(name, token, "folder");
+  for (const file of files) {
+    file.delete();
+  }
+  invalidate("app:reload");
 }
 
 export async function handleFolderDownload(folder: any, token: string) {

@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Folder, File, X, Download } from "lucide-svelte";
+  import { Folder, File, X, Download, Trash } from "lucide-svelte";
   import { page } from "$app/stores";
   import { LibraryCard, Dialog } from "$components/Library/";
   import { Button } from "$components/ui/button";
@@ -7,6 +7,8 @@
     handleUpload,
     handleFileDownload,
     handleFolderDownload,
+    handleFileDelete,
+    handleFolderDelete,
     createNewFolder,
     getFileName,
   } from "$lib/utilities/library";
@@ -45,27 +47,53 @@
     multipleSelected = [];
   }
 
-  function handleMultipleDownload() {
+  function handleMultipleAction(action: string) {
     multipleSelected.map((selected) => {
       if (selected.type === "folder") {
-        handleFolderDownload(
-          {
-            name: getFileName(selected.path),
-            path: selected.path.substring(9),
-          },
-          data.token
-        );
+        const folder = {
+          name: getFileName(selected.path),
+          path: selected.path.substring(9),
+        };
+        dispatchFolderActions(action, folder);
       }
 
       if (selected.type === "file") {
-        handleFileDownload(
-          {
-            fname: selected.path.substring(9),
-          },
-          data.token
-        );
+        const file = {
+          fname: selected.path.substring(9),
+        };
+        dispatchFileActions(action, file);
       }
     });
+  }
+
+  function dispatchFileActions(action: string, file: any) {
+    switch (action) {
+      case "Download": {
+        handleFileDownload(file, data.token);
+        break;
+      }
+
+      case "Delete": {
+        handleFileDelete(file, data.token);
+        break;
+      }
+
+      default:
+        return;
+    }
+  }
+
+  function dispatchFolderActions(action: string, folder: any) {
+    switch (action) {
+      case "Download": {
+        handleFolderDownload(folder, data.token);
+        break;
+      }
+      case "Delete": {
+        handleFolderDelete(folder, data.token);
+        break;
+      }
+    }
   }
 
   function handleFolderChange(e: any) {
@@ -95,8 +123,12 @@
     </Button>
 
     <span class="mr-4">{multipleSelected.length} selected</span>
-    <Button on:click={handleMultipleDownload} variant="outline">
+    <Button on:click={() => handleMultipleAction("Download")} variant="outline">
       <Download class="h4 w-4 cursor-pointer" />
+    </Button>
+
+    <Button on:click={() => handleMultipleAction("Delete")} variant="outline">
+      <Trash class="h-4 w-4 cursor-pointer" />
     </Button>
   {/if}
 </div>
@@ -146,9 +178,7 @@
       type="folder"
       {multipleSelected}
       {handleMultipleSelect}
-      handleDownload={() => {
-        handleFolderDownload(folder, data.token);
-      }}
+      handleAction={(action) => dispatchFolderActions(action, folder)}
       path={`${pathname}/${folder.name}`}
     >
       <Folder class="mr-2" slot="icon" />
@@ -163,9 +193,7 @@
       type="file"
       {multipleSelected}
       {handleMultipleSelect}
-      handleDownload={() => {
-        handleFileDownload(file, data.token);
-      }}
+      handleAction={(action) => dispatchFileActions(action, file)}
       path={`${pathname}/${getFileName(file.fname)}`}
     >
       <File class="mr-2" slot="icon" />
