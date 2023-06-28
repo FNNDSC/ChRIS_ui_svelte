@@ -1,7 +1,7 @@
 import axios from "axios";
-import { invalidateAll, invalidate } from "$app/navigation";
-import { downloadStore } from "$lib/stores/downloadStore";
-import { uploadStore } from "$lib/stores/uploadStore";
+import { invalidate } from "$app/navigation";
+import { downloadStore, type DownloadState } from "$lib/stores/downloadStore";
+import { uploadStore, type UploadState } from "$lib/stores/uploadStore";
 import { fetchClient } from "$lib/client";
 import type { AxiosProgressEvent } from "axios";
 
@@ -340,9 +340,36 @@ export async function createNewFolder(
       headers: { Authorization: "Token " + token },
     };
     await axios.post(client.uploadedFilesUrl, formData, config);
-    
+
     invalidate("app:reload");
   } catch (error) {
     console.log("Error", error);
   }
+}
+
+export function getActiveStatus(
+  downloadState: DownloadState,
+  uploadState: UploadState
+) {
+  let showNotification = false;
+
+  const downloadObj = {
+    ...downloadState.fileDownload,
+    ...downloadState.folderDownload,
+  };
+
+  const uploadObj = {
+    ...uploadState.fileUpload,
+    ...uploadState.folderUpload,
+  };
+
+  if (
+    (Object.keys(downloadObj).length > 0 ||
+      Object.keys(uploadObj).length > 0) &&
+    !downloadState.isOpen &&
+    !uploadState.isOpen
+  ) {
+    showNotification = true;
+  }
+  return showNotification;
 }

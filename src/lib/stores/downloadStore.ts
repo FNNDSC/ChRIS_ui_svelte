@@ -17,7 +17,7 @@ interface FileDownload {
   };
 }
 
-interface DownloadState {
+export interface DownloadState {
   isOpen: boolean;
   folderDownload: FolderDownload;
   fileDownload: FileDownload;

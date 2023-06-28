@@ -17,13 +17,13 @@ interface FileUpload {
   };
 }
 
-interface UploadStatus {
+export interface UploadState {
   isOpen: boolean;
   fileUpload: FileUpload;
   folderUpload: FolderUpload;
 }
 
-function getInitialStatus(): UploadStatus {
+function getInitialStatus(): UploadState {
   return {
     isOpen: false,
     fileUpload: {},
