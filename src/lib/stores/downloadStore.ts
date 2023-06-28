@@ -17,7 +17,7 @@ interface FileDownload {
   };
 }
 
-interface DownloadState {
+export interface DownloadState {
   isOpen: boolean;
   folderDownload: FolderDownload;
   fileDownload: FileDownload;
@@ -135,8 +135,6 @@ function deleteCompletedFileNotifications(fileDownload: FileDownload) {
       delete fileDownload[step];
     } else fileDownload[step];
   }
-
-  return fileDownload;
 }
 
 function deleteCompletedFolderNotifications(folderDownload: FolderDownload) {

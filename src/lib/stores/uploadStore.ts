@@ -1,25 +1,29 @@
 import { writable } from "svelte/store";
 
-interface UploadStatus {
-  isOpen: boolean;
-  fileUpload: {
-    [key: string]: {
-      currentStep: string;
-      progress: number;
-      controller: AbortController;
-    };
-  };
-  folderUpload: {
-    [key: string]: {
-      currentStep: string;
-      done: number;
-      total: number;
-      controller: AbortController;
-    };
+interface FolderUpload {
+  [key: string]: {
+    currentStep: string;
+    done: number;
+    total: number;
+    controller: AbortController;
   };
 }
 
-function getInitialStatus(): UploadStatus {
+interface FileUpload {
+  [key: string]: {
+    currentStep: string;
+    progress: number;
+    controller: AbortController;
+  };
+}
+
+export interface UploadState {
+  isOpen: boolean;
+  fileUpload: FileUpload;
+  folderUpload: FolderUpload;
+}
+
+function getInitialStatus(): UploadState {
   return {
     isOpen: false,
     fileUpload: {},
@@ -28,7 +32,7 @@ function getInitialStatus(): UploadStatus {
 }
 
 function setStatusForUploads() {
-  const { subscribe, set, update } = writable(getInitialStatus());
+  const { subscribe, update } = writable(getInitialStatus());
 
   return {
     subscribe,
@@ -84,6 +88,8 @@ function setStatusForUploads() {
 
     closeNotification: () => {
       update((status) => {
+        deleteCompletedFileNotifications(status.fileUpload);
+        deleteCompletedFolderNotifications(status.folderUpload);
         return {
           ...status,
           isOpen: false,
@@ -91,6 +97,31 @@ function setStatusForUploads() {
       });
     },
   };
+}
+
+function deleteCompletedFileNotifications(fileUpload: FileUpload) {
+  for (const step in fileUpload) {
+    const currentStep = fileUpload[step].currentStep;
+    if (
+      currentStep === "Upload Complete" ||
+      currentStep === "Upload Cancelled"
+    ) {
+      delete fileUpload[step];
+    } else fileUpload[step];
+  }
+}
+
+function deleteCompletedFolderNotifications(folderUpload: FolderUpload) {
+  for (const step in folderUpload) {
+    const currentStep = folderUpload[step].currentStep;
+
+    if (
+      currentStep === "Upload Complete" ||
+      currentStep === "Upload Cancelled"
+    ) {
+      delete folderUpload[step];
+    } else folderUpload[step];
+  }
 }
 
 export const uploadStore = setStatusForUploads();

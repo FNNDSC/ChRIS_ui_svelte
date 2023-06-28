@@ -1,9 +1,10 @@
 <script lang="ts">
   import { createDialog, createMenu } from "svelte-headlessui";
   import { Transition } from "svelte-transition";
+  import Notification from "$components/Notification/Notification.svelte";
   import { uploadStore } from "$lib/stores/uploadStore";
   import { downloadStore } from "$lib/stores/downloadStore";
-  import Notification from "$components/Notification/Notification.svelte";
+  import { getActiveStatus } from "$lib/utilities/library";
 
   export let data;
 
@@ -14,6 +15,8 @@
   });
 
   const menu = createMenu({ label: "Actions" });
+
+  $: currentStatus = getActiveStatus($downloadStore, $uploadStore);
 </script>
 
 <div>
@@ -177,7 +180,7 @@
                         >
                           <span
                             class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white"
-                            >P</span
+                            >U</span
                           >
                           <span class="truncate">Uploads</span>
                         </a>
@@ -189,7 +192,7 @@
                         >
                           <span
                             class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white"
-                            >P</span
+                            >F</span
                           >
                           <span class="truncate">Feeds</span>
                         </a>
@@ -201,7 +204,7 @@
                         >
                           <span
                             class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white"
-                            >T</span
+                            >P</span
                           >
                           <span class="truncate">PACS</span>
                         </a>
@@ -327,7 +330,7 @@
                 >
                   <span
                     class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white"
-                    >P</span
+                    >U</span
                   >
                   <span class="truncate">Uploads</span>
                 </a>
@@ -339,7 +342,7 @@
                 >
                   <span
                     class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white"
-                    >P</span
+                    >F</span
                   >
                   <span class="truncate">Feeds</span>
                 </a>
@@ -351,7 +354,7 @@
                 >
                   <span
                     class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-gray-700 bg-gray-800 text-[0.625rem] font-medium text-gray-400 group-hover:text-white"
-                    >T</span
+                    >P</span
                   >
                   <span class="truncate">PACS</span>
                 </a>
@@ -400,16 +403,18 @@
             class="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500"
           >
             <span
-              class="inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-xs font-medium text-white ring-1 ring-inset ring-gray-800"
+              class="
+              inline-flex items-center gap-x-1.5 rounded-md px-2 py-1 text-xs font-medium text-white ring-1 ring-inset ring-gray-800"
             >
-              {#if Object.keys($uploadStore.fileUpload).length > 0}
+              {#if currentStatus}
                 <svg
-                  class="h-1.5 w-1.5 fill-purple-400"
+                  class="animate-ping h-2 w-2 fill-purple-400"
                   viewBox="0 0 6 6"
                   aria-hidden="true"
                 >
                   <circle cx="3" cy="3" r="3" />
                 </svg>
+                
               {/if}
 
               <svg
