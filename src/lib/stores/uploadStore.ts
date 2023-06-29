@@ -1,4 +1,5 @@
 import { writable } from "svelte/store";
+import { shouldDeleteUpload } from "$lib/utilities/library";
 
 interface FolderUpload {
   [key: string]: {
@@ -101,26 +102,15 @@ function setStatusForUploads() {
 
 function deleteCompletedFileNotifications(fileUpload: FileUpload) {
   for (const step in fileUpload) {
-    const currentStep = fileUpload[step].currentStep;
-    if (
-      currentStep === "Upload Complete" ||
-      currentStep === "Upload Cancelled"
-    ) {
-      delete fileUpload[step];
-    } else fileUpload[step];
+    const shouldDeleteFlag = shouldDeleteUpload(fileUpload[step].currentStep);
+    shouldDeleteFlag && delete fileUpload[step];
   }
 }
 
 function deleteCompletedFolderNotifications(folderUpload: FolderUpload) {
   for (const step in folderUpload) {
-    const currentStep = folderUpload[step].currentStep;
-
-    if (
-      currentStep === "Upload Complete" ||
-      currentStep === "Upload Cancelled"
-    ) {
-      delete folderUpload[step];
-    } else folderUpload[step];
+    const shouldDeleteFlag = shouldDeleteUpload(folderUpload[step].currentStep);
+    shouldDeleteFlag && delete folderUpload[step];
   }
 }
 

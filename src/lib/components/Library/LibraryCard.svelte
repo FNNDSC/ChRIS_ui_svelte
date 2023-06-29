@@ -1,28 +1,32 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
-  import { Card } from "$components/ui/card";
   import { createMenu } from "svelte-headlessui";
   import Transition from "svelte-transition";
+  import { goto } from "$app/navigation";
+  import { Card } from "$components/ui/card";
   import Ellipse from "./Ellipse.svelte";
 
-  export let path: string;
-  export let type: string;
-  export let multipleSelected: { path: string; type: string }[];
+  export let data: {
+    active: boolean;
+    path: string;
+    type: string;
+    multipleSelected: { path: string; type: string }[];
+  };
   export let handleMultipleSelect: (
     path: string,
     multiple: boolean,
     type: string
   ) => void;
-  export let handleDownload: () => void;
+  export let handleAction: (action: string) => void;
 
+  let clickCount = 0;
+  let singleClickTimer: any;
+  let actions = ["Download", "Delete"];
+  $: ({ active, path, type, multipleSelected } = data);
   $: selected = multipleSelected.find((selected) => selected.path === path);
 
   const menu = createMenu({
     label: "Actions",
   });
-
-  let clickCount = 0;
-  let singleClickTimer: any;
 
   function handleClicks(e: MouseEvent) {
     e.preventDefault();
@@ -53,6 +57,12 @@
   {selected && 'border-gray-200'}
 "
 >
+  {#if active}
+    <span
+      class="absolute top-0 right-0 -mr-1 -mt-1 w-2 h-2 rounded-full bg-purple-400 animate-ping"
+    />
+  {/if}
+
   <slot name="icon" />
   <div class="min-w-0 flex-1">
     <a
@@ -96,20 +106,21 @@
         aria-labelledby="options-menu-0-button"
         tabindex="-1"
       >
-        <div use:menu.item>
-          <button
-            on:click|stopPropagation={(e) => {
-              handleDownload();
-
-              menu.close();
-            }}
-            use:menu.item
-            class="bg-gray-100 block px-3 py-1 text-sm leading-6 text-gray-900"
-            role="menuitem"
-            tabindex="-1"
-            id="options-menu-0-item-0">Download</button
-          >
-        </div>
+        {#each actions as action (action)}
+          <div use:menu.item>
+            <button
+              on:click|stopPropagation={() => {
+                handleAction(action);
+                menu.close();
+              }}
+              use:menu.item
+              class="bg-gray-100 block px-3 py-1 text-sm leading-6 text-gray-900"
+              role="menuitem"
+              tabindex="-1"
+              id="options-menu-0-item-0">{action}</button
+            >
+          </div>
+        {/each}
       </div>
     </Transition>
   </div></Card

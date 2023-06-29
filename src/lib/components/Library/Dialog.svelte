@@ -20,7 +20,7 @@
 
 <Dialog bind:open modal={true}>
   <DialogTrigger>
-    <Button on:click={handleDialogToggle} variant="outline"
+    <Button on:click={handleDialogToggle} variant="secondary"
       >Create a Folder</Button
     >
   </DialogTrigger>
