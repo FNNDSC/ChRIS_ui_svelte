@@ -12,7 +12,10 @@
     handleFolderDelete,
     createNewFolder,
     getFileName,
+    getCurrentlyActive,
   } from "$lib/utilities/library";
+  import { downloadStore } from "$lib/stores/downloadStore";
+  import { uploadStore } from "$lib/stores/uploadStore";
   import type { PageData } from "./$types";
 
   export let data: PageData;
@@ -177,11 +180,14 @@
 <div class="grid gap-4 sm:grid-cols-1 lg:grid-cols-5">
   {#each folders as folder (folder.name)}
     <LibraryCard
-      type="folder"
-      {multipleSelected}
+      data={{
+        active: getCurrentlyActive(folder.name, $downloadStore, $uploadStore),
+        type: "folder",
+        multipleSelected,
+        path: `${pathname}/${folder.name}`,
+      }}
       {handleMultipleSelect}
       handleAction={(action) => dispatchFolderActions(action, folder)}
-      path={`${pathname}/${folder.name}`}
     >
       <Folder class="mr-2" slot="icon" />
       <p slot="name" class="text-sm truncate font-medium text-white">
@@ -190,13 +196,22 @@
     </LibraryCard>
   {/each}
 
+  
+
   {#each files as file (file.fname)}
     <LibraryCard
-      type="file"
-      {multipleSelected}
+      data={{
+        active: getCurrentlyActive(
+          getFileName(file.fname),
+          $downloadStore,
+          $uploadStore
+        ),
+        type: "file",
+        multipleSelected,
+        path: `${pathname}/${getFileName(file.fname)}`,
+      }}
       {handleMultipleSelect}
       handleAction={(action) => dispatchFileActions(action, file)}
-      path={`${pathname}/${getFileName(file.fname)}`}
     >
       <File class="mr-2" slot="icon" />
       <p slot="name" class="text-sm truncate font-medium text-white">

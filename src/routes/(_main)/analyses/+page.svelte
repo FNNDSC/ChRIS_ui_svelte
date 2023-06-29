@@ -21,8 +21,7 @@
   const pageParam = "page";
   $: currentPage = Number($page.url.searchParams.get(pageParam)) || 1;
   $: firstCount = currentPage === 1 ? 1 : (currentPage - 1) * pageSize;
-  $: console.log(currentPage);
-  $: endCount = currentPage * pageSize
+  $: endCount = currentPage * pageSize;
   $: previousQuery = new URLSearchParams($page.url.searchParams);
   $: previousQuery.set(pageParam, `${currentPage - 1}`);
   $: nextQuery = new URLSearchParams($page.url.searchParams);

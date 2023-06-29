@@ -5,18 +5,24 @@
   import { Card } from "$components/ui/card";
   import Ellipse from "./Ellipse.svelte";
 
-  export let path: string;
-  export let type: string;
-  export let multipleSelected: { path: string; type: string }[];
+  export let data: {
+    active: boolean;
+    path: string;
+    type: string;
+    multipleSelected: { path: string; type: string }[];
+  };
   export let handleMultipleSelect: (
     path: string,
     multiple: boolean,
     type: string
   ) => void;
   export let handleAction: (action: string) => void;
-  $: selected = multipleSelected.find((selected) => selected.path === path);
+
   let clickCount = 0;
   let singleClickTimer: any;
+  let actions = ["Download", "Delete"];
+  $: ({ active, path, type, multipleSelected } = data);
+  $: selected = multipleSelected.find((selected) => selected.path === path);
 
   const menu = createMenu({
     label: "Actions",
@@ -44,8 +50,6 @@
       }
     }
   }
-
-  let actions = ["Download", "Delete"];
 </script>
 
 <Card
@@ -53,6 +57,12 @@
   {selected && 'border-gray-200'}
 "
 >
+  {#if active}
+    <span
+      class="absolute top-0 right-0 -mr-1 -mt-1 w-2 h-2 rounded-full bg-purple-400 animate-ping"
+    />
+  {/if}
+
   <slot name="icon" />
   <div class="min-w-0 flex-1">
     <a

@@ -38,16 +38,15 @@ export async function fetchFile(fname: string, token: string, type: string) {
 
   const fetchedFile = fetchedFileList.getItems() as any;
 
-  console.log("FetchedFile", fetchedFile);
   return type === "file" ? fetchedFile[0] : fetchedFile;
 }
 
 export async function handleFileDownload(file: any, token: string) {
-  const fileData = await fetchFile(file, token, "file");
+  const fileData = await fetchFile(file.fname, token, "file");
   const fileSize = fileData.data.fsize;
   const fileName = getFileName(fileData.data.fname);
 
-  if (fileSize > 1000000000) {
+  if (fileSize > 250000) {
     downloadStore.setNewNotification();
     const url = `${fileData.url}${fileName}`;
     const controller = new AbortController();
@@ -131,6 +130,7 @@ export async function handleFolderDownload(folder: any, token: string) {
 
   if (!dircopyList) {
     downloadStore.setFolderStep(folder.name, "Download Failed");
+    return;
   }
 
   const dircopy = dircopyList[0];
@@ -148,6 +148,7 @@ export async function handleFolderDownload(folder: any, token: string) {
 
   if (!dircopyPluginInstance) {
     downloadStore.setFolderStep(folder.name, "Download Failed");
+    return;
   }
 
   const cancelledDircopy = function cancelled() {
@@ -155,6 +156,7 @@ export async function handleFolderDownload(folder: any, token: string) {
       status: "cancelled",
     });
     downloadStore.setFolderStep(folder.name, "Download Cancelled");
+    return;
   };
 
   downloadStore.cancelDownload(folder.name, cancelledDircopy);
@@ -174,6 +176,7 @@ export async function handleFolderDownload(folder: any, token: string) {
 
   if (!zipPluginList || !zipPluginList.data) {
     downloadStore.setFolderStep(folder.name, "Download Failed");
+    return;
   }
 
   const zipPluginInstance = await client.createPluginInstance(
@@ -183,6 +186,7 @@ export async function handleFolderDownload(folder: any, token: string) {
 
   if (!zipPluginInstance) {
     downloadStore.setFolderStep(folder.name, "Download Failed");
+    return;
   }
 
   const cancelledZip = function cancelled() {
@@ -219,6 +223,7 @@ export async function handleFolderDownload(folder: any, token: string) {
     ["cancelled", "finishedWithError"].includes(status)
   ) {
     downloadStore.setFolderStep(folder.name, "Download Cancelled");
+    return;
   } else {
     downloadStore.setFolderStep(folder.name, "Preparing to Download");
 
@@ -256,6 +261,7 @@ export async function handleFolderDownload(folder: any, token: string) {
       }
     } catch (error) {
       downloadStore.setFolderStep(folder.name, "Download Failed");
+      return;
     }
   }
 }
@@ -331,11 +337,11 @@ export async function handleUpload(
         },
       };
       await axios.post(url, formData, config);
-      invalidate("app:reload");
     } catch (error: any) {
-      return;
+      uploadStore.setStatusForFiles("Upload Failed", file.name, 0, controller);
     }
   });
+  invalidate("app:reload");
 }
 
 export async function createNewFolder(
@@ -361,19 +367,16 @@ export async function createNewFolder(
       headers: { Authorization: "Token " + token },
     };
     await axios.post(client.uploadedFilesUrl, formData, config);
-
     invalidate("app:reload");
   } catch (error) {
     console.log("Error", error);
   }
 }
 
-export function getActiveStatus(
+function getMergedObjects(
   downloadState: DownloadState,
   uploadState: UploadState
 ) {
-  let showNotification = false;
-
   const downloadObj = {
     ...downloadState.fileDownload,
     ...downloadState.folderDownload,
@@ -384,6 +387,19 @@ export function getActiveStatus(
     ...uploadState.folderUpload,
   };
 
+  return { downloadObj, uploadObj };
+}
+
+export function getActiveStatus(
+  downloadState: DownloadState,
+  uploadState: UploadState
+) {
+  let showNotification = false;
+  const { downloadObj, uploadObj } = getMergedObjects(
+    downloadState,
+    uploadState
+  );
+
   if (
     (Object.keys(downloadObj).length > 0 ||
       Object.keys(uploadObj).length > 0) &&
@@ -393,4 +409,46 @@ export function getActiveStatus(
     showNotification = true;
   }
   return showNotification;
+}
+
+export function shouldDeleteDownload(currentStep: string) {
+  const actions = [
+    "Download Complete",
+    "Download Cancelled",
+    "Download Failed",
+  ];
+  if (actions.includes(currentStep)) {
+    return true;
+  }
+
+  return false;
+}
+
+export function shouldDeleteUpload(currentStep: string) {
+  const actions = ["Upload Complete", "Upload Cancelled", "Upload Failed"];
+  if (actions.includes(currentStep)) {
+    return true;
+  }
+
+  return false;
+}
+
+export function getCurrentlyActive(
+  name: string,
+  downloadState: DownloadState,
+  uploadState: UploadState
+) {
+  const { downloadObj, uploadObj } = getMergedObjects(
+    downloadState,
+    uploadState
+  );
+  const showNotification =
+    (downloadObj[name] &&
+      !shouldDeleteDownload(downloadObj[name].currentStep)) ||
+    (uploadObj[name] && !shouldDeleteUpload(uploadObj[name].currentStep));
+
+  if (showNotification) {
+    return true;
+  }
+  return false;
 }

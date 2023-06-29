@@ -1,4 +1,5 @@
 import { writable } from "svelte/store";
+import { shouldDeleteDownload } from "$lib/utilities/library";
 
 interface FolderDownload {
   [key: string]: {
@@ -126,27 +127,15 @@ function setStatusForDownloads() {
 
 function deleteCompletedFileNotifications(fileDownload: FileDownload) {
   for (const step in fileDownload) {
-    const currentStep = fileDownload[step].currentStep;
-
-    if (
-      currentStep === "Download Complete" ||
-      currentStep === "Download Cancelled"
-    ) {
-      delete fileDownload[step];
-    } else fileDownload[step];
+    const shouldDeleteFlag = shouldDeleteDownload(fileDownload[step].currentStep);
+    shouldDeleteFlag && delete fileDownload[step];
   }
 }
 
 function deleteCompletedFolderNotifications(folderDownload: FolderDownload) {
   for (const step in folderDownload) {
-    const currentStep = folderDownload[step].currentStep;
-
-    if (
-      currentStep === "Download Complete" ||
-      currentStep === "Download Cancelled"
-    ) {
-      delete folderDownload[step];
-    } else folderDownload[step];
+    const shouldDeleteFlag = shouldDeleteDownload(folderDownload[step].currentStep);
+    shouldDeleteFlag && delete folderDownload[step];
   }
 }
 
